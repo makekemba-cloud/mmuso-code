@@ -1,30 +1,34 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue'
+import Popup     from './components/Popup.vue'
+import Nav       from './components/Nav.vue'
+import Hero      from './components/Hero.vue'
+import About     from './components/About.vue'
+import Expertise from './components/Expertise.vue'
+import Approach  from './components/Approach.vue'
+import Stack     from './components/Stack.vue'
+import Projects  from './components/Projects.vue'
+import Contact   from './components/Contact.vue'
+import Footer    from './components/Footer.vue'
+
+const popupRef = ref<InstanceType<typeof Popup> | null>(null)
+
+function showPopup() {
+  popupRef.value?.show()
+}
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="bg-[#0a0a0a] text-gray-200 antialiased">
+    <Popup ref="popupRef" />
+    <Nav />
+    <Hero />
+    <About />
+    <Expertise />
+    <Approach />
+    <Stack />
+    <Projects />
+    <Contact @show-popup="showPopup" />
+    <Footer />
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
-
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
