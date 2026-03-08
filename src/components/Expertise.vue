@@ -6,15 +6,31 @@ interface ExpertiseItem {
 }
 
 const items: ExpertiseItem[] = [
-  { icon: 'fa-mobile-alt',  title: 'Mobile Development',  description: 'Native and cross-platform mobile apps for iOS and Android' },
-  { icon: 'fa-globe',       title: 'Web Development',      description: 'Modern, responsive web applications and platforms' },
-  { icon: 'fa-database',    title: 'Database Management',  description: 'Scalable database solutions and data architecture' },
-  { icon: 'fa-microchip',   title: 'IoT Solutions',        description: 'Connected devices and intelligent automation systems' },
+  { 
+    icon: 'fa-globe',
+    title: 'Web Application Development',
+    description: 'Modern, responsive web applications and digital platforms built with scalable architectures.'
+  },
+  { 
+    icon: 'fa-server',
+    title: 'Backend & API Development',
+    description: 'Secure backend systems, REST APIs, authentication, and scalable server-side logic.'
+  },
+  { 
+    icon: 'fa-database',
+    title: 'Database Architecture',
+    description: 'Designing secure, efficient databases with PostgreSQL, Supabase, and SQL Server.'
+  },
+  { 
+    icon: 'fa-shield-alt',
+    title: 'Security & Access Control',
+    description: 'Authentication systems, role-based access control, and secure data architecture.'
+  },
 ]
 </script>
 
 <template>
-  <section class="py-20 bg-[#000000]">
+  <section id="expertise" class="py-20 bg-[#000000]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-center mb-4">
         <span class="section-badge">

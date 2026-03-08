@@ -1,5 +1,12 @@
+// main.ts
 import { createApp } from 'vue'
-import './style.css'
 import App from './App.vue'
+import router from './router'
 
-createApp(App).mount('#app')
+// Import Tailwind (if not already)
+import './style.css'
+
+// Import Font Awesome CSS
+import '@fortawesome/fontawesome-free/css/all.css'
+
+createApp(App).use(router).mount('#app')

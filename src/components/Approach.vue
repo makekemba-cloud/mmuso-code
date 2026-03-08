@@ -6,14 +6,40 @@ interface ApproachItem {
 }
 
 const items: ApproachItem[] = [
-  { icon: 'fa-sync-alt',    title: 'Agile Methodology',   description: 'Iterative development with continuous client collaboration' },
-  { icon: 'fa-code',        title: 'Technical Excellence', description: 'Clean code, best practices, and robust architecture' },
-  { icon: 'fa-paint-brush', title: 'Intuitive UX',         description: 'User-centered design that delights and converts' },
+  {
+    icon: 'fa-lightbulb',
+    title: 'Understand the Problem',
+    description: 'We start by understanding the client’s idea, goals, and technical requirements before writing any code.'
+  },
+  {
+    icon: 'fa-code',
+    title: 'Build with Modern Tech',
+    description: 'Using modern frameworks, clean architecture, and scalable systems to build reliable digital platforms.'
+  },
+  {
+    icon: 'fa-shield-alt',
+    title: 'Security First',
+    description: 'Authentication, access control, and secure data handling are built into every system from the start.'
+  }
 ]
 </script>
 
 <template>
   <section class="pb-20 bg-[#000000]">
+    <div class="relative mb-16 flex items-center justify-center">
+  
+  <!-- Left Line -->
+  <div class="flex-grow h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+
+  <!-- Label -->
+  <span class="mx-6 px-4 py-1 text-xs uppercase tracking-wider text-gray-500 bg-[#000] border border-gray-800 rounded-full">
+    Our Process
+  </span>
+
+  <!-- Right Line -->
+  <div class="flex-grow h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+
+</div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 class="text-3xl md:text-4xl font-bold text-center text-white mb-12">
         Our <span class="text-[#2563EB]">Approach</span>
