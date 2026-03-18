@@ -78,10 +78,20 @@ onUnmounted(() => {
         <p class="text-xs text-gray-600">Built with Vue 3 + TypeScript + Tailwind CSS</p>
       </div>
 
-      <!-- Extra Branding Line -->
+      <!-- ===== UPDATED: Founder credit with link ===== -->
       <div class="text-center mt-4 text-gray-500 text-xs">
-        Innovative Software <span class="text-[#2563EB]">Solutions</span> &gt; Makekemba Vhutali &lt;
+        Innovative Software <span class="text-[#2563EB]">Solutions</span> &gt; 
+        <a 
+          href="https://makekembavhutali.co.za" 
+          target="_blank" 
+          rel="noopener" 
+          class="hover:text-[#2563EB] underline"
+        >
+          Makekemba Vhutali
+        </a> &lt;
       </div>
+      <!-- ===== End update ===== -->
+
     </div>
   </footer>
 </template>

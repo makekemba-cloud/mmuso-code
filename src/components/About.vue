@@ -12,7 +12,7 @@
 
       <!-- Title -->
       <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-        About <span class="text-[#2563EB]">Mmuso Code</span>
+        About <span c>Mmuso Code</span>
       </h2>
 
       <!-- Content -->
