@@ -38,18 +38,21 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "LocalBusiness",
+      "@type": ["Organization", "LocalBusiness"],
+      "@id": "https://www.mmusocode.co.za/#organization",
+
       "name": "Mmuso Code",
-      "url": "https://mmusocode.co.za",
-      "logo": "https://mmusocode.co.za/assets/logo.png",
-      "image": "https://mmusocode.co.za/assets/og-image.png",
+      "url": "https://www.mmusocode.co.za",
+      "logo": "https://www.mmusocode.co.za/assets/logo.png",
+      "image": "https://www.mmusocode.co.za/assets/og-image.png",
+
       "description": "Mmuso Code is a South African software development company building modern web applications, mobile apps, and secure digital platforms.",
       "foundingDate": "2026",
 
       "founder": {
         "@type": "Person",
         "name": "Makekemba Vhutali",
-        "url": "https://makekembavhutali.co.za"
+        "url": "https://www.makekembavhutali.co.za"
       },
 
       "address": {
@@ -62,6 +65,8 @@
         "name": "South Africa"
       },
 
+      "priceRange": "$$",
+
       "contactPoint": {
         "@type": "ContactPoint",
         "telephone": "+27729473009",
@@ -73,8 +78,50 @@
       "sameAs": [
         "https://github.com/makekemba-cloud",
         "https://linkedin.com/in/makekemba-vhutali",
-        "https://x.com/Makekembavhutal"
-      ]
+        "https://x.com/Makekembavhutal",
+        "https://www.instagram.com/mmuso.0/",
+        "https://www.facebook.com/Mmuso.0",
+        "https://www.youtube.com/@makekembavhutali6820",
+        "https://www.tiktok.com/@makekemba_vhutali"
+      ],
+
+      "knowsAbout": [
+        "Web Development",
+        "Mobile App Development",
+        "Next.js",
+        "TypeScript",
+        "C#",
+        "Cloud Applications",
+        "Cybersecurity"
+      ],
+
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Software Development Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Web Development"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Mobile App Development"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Custom Software Solutions"
+            }
+          }
+        ]
+      }
     }
     </script>
   </head>
@@ -90,3 +137,4 @@
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
+
