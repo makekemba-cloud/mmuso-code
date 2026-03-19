@@ -35,14 +35,14 @@ async function handleSubmit() {
 }
 
 const contactInfo = [
-  { icon: 'fa-envelope',       label: 'Email',          value: 'makekembav@gmail.com',        href: 'mailto:makekembav@gmail.com' },
+  { icon: 'fa-envelope',       label: 'Email',          value: 'info@mmusocode.co.za',        href: 'mailto:info@mmusocode.co.za' },
   { icon: 'fa-phone-alt',      label: 'Phone',          value: '+27 72 947 3009',              href: 'tel:+27729473009' },
   { icon: 'fa-map-marker-alt', label: 'Location',       value: 'Masia, Limpopo, South Africa', href: null },
   { icon: 'fa-clock',          label: 'Business Hours', value: 'Monday - Sunday: 24/7',        href: null },
 ]
 
 const socials = [
-  { icon: 'fas fa-envelope',    href: 'mailto:makekembav@gmail.com',               label: 'Email',     color: 'hover:text-red-400 hover:border-red-400' },
+  { icon: 'fas fa-envelope',    href: 'mailto:info@mmusocode.co.za',               label: 'Email',     color: 'hover:text-red-400 hover:border-red-400' },
   { icon: 'fab fa-linkedin-in', href: 'https://linkedin.com/in/makekemba-vhutali', label: 'LinkedIn',  color: 'hover:text-blue-400 hover:border-blue-400' },
   { icon: 'fab fa-github',      href: 'https://github.com/makekemba-cloud',        label: 'GitHub',    color: 'hover:text-gray-300 hover:border-gray-300' },
   { icon: 'fab fa-twitter',     href: 'https://x.com/Makekembavhutal',             label: 'Twitter',   color: 'hover:text-sky-400 hover:border-sky-400' },
