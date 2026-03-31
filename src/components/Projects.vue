@@ -22,7 +22,7 @@ const projects: Project[] = [
     image: '/assets/Screenshot%202026-03-06%20155706.png',
     description: 'A modern, responsive portfolio built with Next.js to showcase projects, technical skills, and development experience. Features animated project cards, dynamic filtering, and sections for blogs and mini apps.',
     tags: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Vercel'],
-    liveUrl: 'https://makekembav-portfolio.vercel.app/',
+    liveUrl: 'https://makekembavhutali.co.za/',
     codeUrl: 'https://github.com/makekemba-cloud/my-portfolio',
   },
   {
