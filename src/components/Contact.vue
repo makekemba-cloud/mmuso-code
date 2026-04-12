@@ -27,7 +27,7 @@ async function handleSubmit() {
     emit('showPopup')
     form.value = { name: '', email: '', title: '', message: '' }
   } catch (err) {
-    alert('Failed. Please email makekembav@gmail.com directly.')
+    alert('Failed. Please email info@mmusocode.co.za directly.')
     console.error(err)
   } finally {
     sending.value = false
@@ -36,7 +36,7 @@ async function handleSubmit() {
 
 const contactInfo = [
   { icon: 'fa-envelope',       label: 'Email',          value: 'info@mmusocode.co.za',        href: 'mailto:info@mmusocode.co.za' },
-  { icon: 'fa-phone-alt',      label: 'Phone',          value: '+27 72 947 3009',              href: 'tel:+27729473009' },
+  { icon: 'fa-phone-alt',      label: 'Phone',          value: '+27 79 118 9866',              href: 'tel:+27791189866' },
   { icon: 'fa-map-marker-alt', label: 'Location',       value: 'Masia, Limpopo, South Africa', href: null },
   { icon: 'fa-clock',          label: 'Business Hours', value: 'Monday - Sunday: 24/7',        href: null },
 ]
@@ -46,8 +46,8 @@ const socials = [
   { icon: 'fab fa-linkedin-in', href: 'https://linkedin.com/in/makekemba-vhutali', label: 'LinkedIn',  color: 'hover:text-blue-400 hover:border-blue-400' },
   { icon: 'fab fa-github',      href: 'https://github.com/makekemba-cloud',        label: 'GitHub',    color: 'hover:text-gray-300 hover:border-gray-300' },
   { icon: 'fab fa-twitter',     href: 'https://x.com/Makekembavhutal',             label: 'Twitter',   color: 'hover:text-sky-400 hover:border-sky-400' },
-  { icon: 'fab fa-whatsapp',    href: 'https://wa.me/27729473009',                 label: 'WhatsApp',  color: 'hover:text-green-400 hover:border-green-400' },
-  { icon: 'fab fa-facebook-f',  href: 'https://www.facebook.com/Mmuso.0',          label: 'Facebook',  color: 'hover:text-blue-500 hover:border-blue-500' },
+  { icon: 'fab fa-whatsapp',    href: 'https://wa.me/27791189866',                 label: 'WhatsApp',  color: 'hover:text-green-400 hover:border-green-400' },
+  { icon: 'fab fa-facebook-f',  href: 'https://www.facebook.com/mmusocode',          label: 'Facebook',  color: 'hover:text-blue-500 hover:border-blue-500' },
   { icon: 'fab fa-instagram',   href: 'https://www.instagram.com/mmuso.0/',        label: 'Instagram', color: 'hover:text-pink-400 hover:border-pink-400' },
 ]
 

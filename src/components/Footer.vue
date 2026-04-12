@@ -16,7 +16,7 @@ const socials = [
   { icon: 'fab fa-linkedin-in', href: 'https://linkedin.com/in/makekemba-vhutali', label: 'LinkedIn' },
   { icon: 'fab fa-twitter',     href: 'https://x.com/Makekembavhutal',             label: 'Twitter' },
   { icon: 'fab fa-instagram',   href: 'https://www.instagram.com/mmuso.0/',        label: 'Instagram' },
-  { icon: 'fab fa-facebook-f',  href: 'https://www.facebook.com/Mmuso.0',          label: 'Facebook' },
+  { icon: 'fab fa-facebook-f',  href: 'https://www.facebook.com/mmusocode',          label: 'Facebook' },
 ]
 
 // Scroll-to-top logic

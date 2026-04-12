@@ -2,7 +2,7 @@
 <template>
   <!-- WhatsApp Button -->
   <a
-    href="https://wa.me/27729473009"
+    href="https://wa.me/27791189866"
     target="_blank"
     rel="noopener noreferrer"
     class="group fixed bottom-5 right-5 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#1ebe5d] text-white rounded-full shadow-lg shadow-[#25D366]/30 flex items-center justify-center transition-all hover:scale-110 hover:shadow-[#25D366]/50"

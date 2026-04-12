@@ -30,7 +30,7 @@ const projects: Project[] = [
     image: '/assets/Screenshot%202026-03-06%20155837.png',
     description: 'A full-stack athletic club management platform with member registration, admin approvals, role-based access control, and athlete profiles. Built with Supabase RLS enforced at the database layer.',
     tags: ['Next.js', 'TypeScript', 'Supabase', 'PostgreSQL', 'Tailwind CSS'],
-    inProduction: true,
+    inProduction: false,
     liveUrl: 'https://sibalekananiac.co.za',
   },
 ]
