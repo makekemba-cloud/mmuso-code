@@ -9,7 +9,6 @@ import About       from './components/About.vue'
 import Expertise   from './components/Expertise.vue'
 import Process     from './components/Process.vue'
 import Approach    from './components/Approach.vue'
-import Stack       from './components/Stack.vue'
 import Projects    from './components/Projects.vue'
 import WhyUs       from './components/WhyUs.vue'
 import CTA         from './components/CTA.vue'
@@ -51,8 +50,7 @@ onMounted(() => {
     <div class="reveal"><About /></div>
     <div class="reveal"><Expertise /></div>
     <div class="reveal"><Process /></div>
-    <div class="reveal"><Approach /></div>
-    
+    <div class="reveal"><Approach /></div>  
     <div class="reveal"><Projects /></div>
     <div class="reveal"><WhyUs /></div>
     <div class="reveal"><CTA /></div>
