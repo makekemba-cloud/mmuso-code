@@ -36,7 +36,7 @@
           <i class="fas fa-paper-plane"></i> Start Your Project
         </a>
         <a
-          href="tel:+27729473009"
+          href="tel:+27791189866"
           class="border border-gray-600 text-gray-300 px-8 py-4 rounded-lg font-semibold hover:border-[#2563EB] hover:text-white hover:bg-[#2563EB]/5 transition hover-glow flex items-center justify-center gap-2 text-lg"
         >
           <i class="fas fa-phone-alt"></i> Book a Consultation

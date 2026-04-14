@@ -5,31 +5,32 @@ interface Project {
   description: string
   tags: string[]
   inProduction?: boolean
+  underDevelopment?: boolean
   liveUrl?: string
   codeUrl?: string
 }
 
 const projects: Project[] = [
   {
-    title: 'BigSmallInsights',
-    image: '/assets/Screenshot%202026-03-06%20155732.png',
+    title: 'Big Small Insights',
+    image: '/assets/Screenshot%202026-04-14%20165420.png',
     description: 'A student support platform connecting learners with mentors, tutors, and structured resources. Features Google OAuth, role-based access control, Sentry error monitoring, and custom activity logging.',
-    tags: ['Next.js', 'TypeScript', 'Supabase', 'Google OAuth', 'Sentry'],
+    tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'React'],
     liveUrl: 'https://www.bigsmallinsights.co.za/',
   },
   {
-    title: 'Developer Portfolio',
-    image: '/assets/Screenshot%202026-03-06%20155706.png',
-    description: 'A modern, responsive portfolio built with Next.js to showcase projects, technical skills, and development experience. Features animated project cards, dynamic filtering, and sections for blogs and mini apps.',
-    tags: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Vercel'],
-    liveUrl: 'https://makekembavhutali.co.za/',
-    codeUrl: 'https://github.com/makekemba-cloud/my-portfolio',
+    title: 'Let Us Heal',
+    image: '/assets/let-us-heal.png',
+    description: 'A modern, responsive website for a youth‑centered non‑profit organisation. Features a premium design with purple/orange theme, interactive sections (donation, volunteer, gallery, merchandise), Built to empower youth and enrich communities.',
+    tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'React'],
+    underDevelopment: true,
+    liveUrl: 'https://let-us-heal.vercel.app/',
   },
   {
     title: 'SNAC Member System',
     image: '/assets/Screenshot%202026-03-06%20155837.png',
     description: 'A full-stack athletic club management platform with member registration, admin approvals, role-based access control, and athlete profiles. Built with Supabase RLS enforced at the database layer.',
-    tags: ['Next.js', 'TypeScript', 'Supabase', 'PostgreSQL', 'Tailwind CSS'],
+    tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'React'],
     inProduction: false,
     liveUrl: 'https://sibalekananiac.co.za',
   },
@@ -61,9 +62,13 @@ const projects: Project[] = [
           :key="project.title"
           class="relative bg-[#111] rounded-2xl overflow-hidden border border-gray-800 shadow-lg transform transition-all hover:-translate-y-2 hover:scale-105 hover:shadow-[#2563EB]/30"
         >
-          <!-- Ribbon for Proud/Production -->
+          <!-- Ribbon for In Production -->
           <div v-if="project.inProduction" class="absolute top-3 left-0 bg-[#2563EB] px-3 py-1 text-xs font-semibold text-white rounded-r-lg z-10">
             In Production
+          </div>
+          <!-- Ribbon for Under Development -->
+          <div v-if="project.underDevelopment" class="absolute top-3 left-0 bg-[#F59E0B] px-3 py-1 text-xs font-semibold text-white rounded-r-lg z-10">
+            Under Development
           </div>
 
           <!-- Image -->

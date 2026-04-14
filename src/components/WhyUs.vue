@@ -66,21 +66,17 @@ const industries = [
         </div>
       </div>
 
-     
-        <div class="relative mb-16 flex items-center justify-center">
-  
-            <!-- Left Line -->
-            <div class="flex-grow h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+      <div class="relative mb-16 flex items-center justify-center">
+        <!-- Left Line -->
+        <div class="flex-grow h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+        <!-- Label -->
+        <span class="mx-6 px-4 py-1 text-xs uppercase tracking-wider text-gray-500 bg-[#000] border border-gray-800 rounded-full">
+          Industries We Serve
+        </span>
+        <!-- Right Line -->
+        <div class="flex-grow h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+      </div>
 
-            <!-- Label -->
-            <span class="mx-6 px-4 py-1 text-xs uppercase tracking-wider text-gray-500 bg-[#000] border border-gray-800 rounded-full">
-            Industries We Serve
-            </span>
-
-            <!-- Right Line -->
-            <div class="flex-grow h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
-
-        </div>
       <!-- Industries -->
       <div class="flex flex-wrap justify-center gap-4 mb-16">
         <div
@@ -96,10 +92,14 @@ const industries = [
       <!-- Trusted By -->
       <div class="text-center">
         <p class="text-sm uppercase tracking-widest text-gray-500 mb-6">Trusted By</p>
-        <div class="flex flex-wrap justify-center gap-8 items-center">
-          <a href="https://www.bigsmallinsights.co.za/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-lg hover:text-[#2563EB] transition">BigSmallInsights</a>
+        <div class="flex flex-wrap justify-center gap-6 items-center">
+          <a href="https://www.bigsmallinsights.co.za/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-lg hover:text-[#2563EB] transition">Big Small Insights</a>
           <div class="w-px h-6 bg-gray-700"></div>
           <a href="https://sibalekananiac.co.za" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-lg hover:text-[#2563EB] transition">SNAC Athletics Club</a>
+          <div class="w-px h-6 bg-gray-700"></div>
+          <a href="https://let-us-heal.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-lg hover:text-[#2563EB] transition">Let Us Heal</a>
+          <div class="w-px h-6 bg-gray-700"></div>
+          <div class="text-gray-400 font-semibold text-lg cursor-default">Sizofakulwazi Foundation</div>
           <div class="w-px h-6 bg-gray-700"></div>
           <div class="text-gray-400 font-semibold text-lg cursor-default">Startups Across South Africa</div>
         </div>

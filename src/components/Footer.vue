@@ -5,8 +5,10 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const navLinks = [
   { href: '#home',     label: 'Home' },
   { href: '#about',    label: 'About' },
-  { href: '#stack',    label: 'Stack' },
+  { href: '#expertise', label: 'Expertise' },
+  { href: '#process',   label: 'Process' },
   { href: '#projects', label: 'Projects' },
+  { href: '#why-us',   label: 'Why Us' },
   { href: '#contact',  label: 'Contact' },
 ]
 

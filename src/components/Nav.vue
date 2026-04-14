@@ -10,7 +10,6 @@ const navItems = [
   { id: 'about', label: 'About', icon: 'fa-user' },
   { id: 'expertise', label: 'Expertise', icon: 'fa-lightbulb' },
   { id: 'process', label: 'Process', icon: 'fa-diagram-project' },
-  { id: 'stack', label: 'Stack', icon: 'fa-layer-group' },
   { id: 'projects', label: 'Projects', icon: 'fa-code' },
   { id: 'why-us', label: 'Why Us', icon: 'fa-star' },
   { id: 'contact', label: 'Contact', icon: 'fa-envelope' },

@@ -6,7 +6,7 @@ interface Stat {
 }
 
 const stats: Stat[] = [
-  { value: '3+',   label: 'Projects Delivered',   icon: 'fa-folder-open' },
+  { value: '6+',   label: 'Projects Delivered',   icon: 'fa-folder-open' },
   { value: '2+',   label: 'Years Experience',      icon: 'fa-calendar-alt' },
   { value: '100%', label: 'Client Satisfaction',   icon: 'fa-star' },
   { value: '24/7', label: 'Support Available',     icon: 'fa-headset' },

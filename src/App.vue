@@ -52,7 +52,7 @@ onMounted(() => {
     <div class="reveal"><Expertise /></div>
     <div class="reveal"><Process /></div>
     <div class="reveal"><Approach /></div>
-    <div class="reveal"><Stack /></div>
+    
     <div class="reveal"><Projects /></div>
     <div class="reveal"><WhyUs /></div>
     <div class="reveal"><CTA /></div>
