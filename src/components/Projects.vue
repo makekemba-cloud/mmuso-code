@@ -24,7 +24,7 @@ const projects: Project[] = [
     description: 'A modern, responsive website for a youth‑centered non‑profit organisation. Features a premium design with purple/orange theme, interactive sections (donation, volunteer, gallery, merchandise), Built to empower youth and enrich communities.',
     tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'React'],
     underDevelopment: true,
-    liveUrl: 'https://let-us-heal.vercel.app/',
+    liveUrl: 'https://letusheal.co.za/',
   },
   {
     title: 'SNAC Member System',
