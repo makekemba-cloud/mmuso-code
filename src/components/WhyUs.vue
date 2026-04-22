@@ -97,7 +97,7 @@ const industries = [
           <div class="w-px h-6 bg-gray-700"></div>
           <a href="https://sibalekananiac.co.za" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-lg hover:text-[#2563EB] transition">SNAC Athletics Club</a>
           <div class="w-px h-6 bg-gray-700"></div>
-          <a href="https://let-us-heal.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-lg hover:text-[#2563EB] transition">Let Us Heal</a>
+          <a href="https://let-us-heal.co.za/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-lg hover:text-[#2563EB] transition">Let Us Heal</a>
           <div class="w-px h-6 bg-gray-700"></div>
           <div class="text-gray-400 font-semibold text-lg cursor-default">Sizofakulwazi Foundation</div>
           <div class="w-px h-6 bg-gray-700"></div>
