@@ -11,7 +11,7 @@ interface PricingPlan {
 const developmentPlans: PricingPlan[] = [
   {
     name: 'Basic Business Website',
-    priceRange: 'R2,500 – R6,000',
+    priceRange: 'R1,500 – R4,000',
     description: 'Perfect for small businesses, portfolios, and local brands.',
     features: [
       'Responsive design',
@@ -24,7 +24,7 @@ const developmentPlans: PricingPlan[] = [
   },
   {
     name: 'Premium Business Website',
-    priceRange: 'R6,000 – R15,000+',
+    priceRange: 'R4,000 – R10,000+',
     description: 'For professional companies, startups, and premium branding.',
     features: [
       'Custom UI/UX',
@@ -39,7 +39,7 @@ const developmentPlans: PricingPlan[] = [
   },
   {
     name: 'E-Commerce Website',
-    priceRange: 'R8,000 – R25,000+',
+    priceRange: 'R8,000 – R20,000+',
     description: 'Full online store with cart, checkout, and admin panel.',
     features: [
       'Product catalog',
@@ -53,7 +53,7 @@ const developmentPlans: PricingPlan[] = [
   },
   {
     name: 'Web Applications / Platforms',
-    priceRange: 'R15,000 – R80,000+',
+    priceRange: 'R5,000 +',
     description: 'Custom portals, booking systems, SaaS platforms, dashboards.',
     features: [
       'Authentication & roles',
@@ -70,7 +70,7 @@ const developmentPlans: PricingPlan[] = [
 const maintenancePlans: PricingPlan[] = [
   {
     name: 'Starter Support',
-    priceRange: 'R300 – R800 / month',
+    priceRange: 'R200 – R800 / month',
     description: 'Essential maintenance for peace of mind.',
     features: [
       'Weekly backups',
