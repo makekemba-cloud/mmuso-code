@@ -184,7 +184,7 @@ onUnmounted(() => {
         @click.prevent="navigateToSection('home')"
       >
         <img
-          src="/assets/Screenshot%202026-02-12%20170409.png"
+          src="/assets/mmuso-code-logoi.png"
           alt="Mmuso Code"
           class="logo-img"
         >

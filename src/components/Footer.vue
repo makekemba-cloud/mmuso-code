@@ -59,7 +59,7 @@ function scrollToTop() {
       <div class="flex flex-col items-center gap-8 md:flex-row md:justify-between md:items-center md:gap-6">
         <!-- Logo - larger touch area on mobile -->
         <a href="#home" class="block transition-transform duration-300 hover:scale-105 active:scale-95">
-          <img src="/assets/Screenshot%202026-02-12%20170354.png" alt="Mmuso Code" class="logo-img max-h-12 md:max-h-12 w-auto">
+          <img src="/assets/mmuso-code-logoi.png" alt="Mmuso Code" class="logo-img max-h-12 md:max-h-12 w-auto">
         </a>
 
         <!-- Navigation links - better wrapping and spacing on mobile -->
