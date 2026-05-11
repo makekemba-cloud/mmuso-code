@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
 
 const mobileOpen = ref(false)
 const activeSection = ref('home')
@@ -28,11 +32,29 @@ function setActive(id: string) {
   closeMobile()
 }
 
-let observers: IntersectionObserver[] = []
+// Universal navigation handler
+function navigateToSection(id: string) {
+  closeMobile()
+  
+  if (route.path === '/') {
+    const element = document.getElementById(id)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      history.pushState(null, '', `#${id}`)
+      setActive(id)
+    }
+  } else {
+    router.push({ path: '/', hash: `#${id}` })
+  }
+}
 
-function handleScroll() {
-  scrollProgress.value =
-    (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100
+let observer: IntersectionObserver | null = null
+
+function updateScrollProgress() {
+  if (route.path !== '/') return
+  const scrollY = window.scrollY
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+  scrollProgress.value = (scrollY / maxScroll) * 100
 }
 
 function handleClickOutside(e: MouseEvent) {
@@ -42,46 +64,125 @@ function handleClickOutside(e: MouseEvent) {
   }
 }
 
-onMounted(() => {
-  document.querySelectorAll('section[id]').forEach((section) => {
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) activeSection.value = entry.target.id
-        })
-      },
-      { threshold: 0.3 }
-    )
-    obs.observe(section)
-    observers.push(obs)
-  })
+// Improved IntersectionObserver with better rootMargin
+function initIntersectionObserver() {
+  if (route.path !== '/') return
+  if (observer) observer.disconnect()
 
-  window.addEventListener('scroll', handleScroll)
+  const sections = document.querySelectorAll('section[id]')
+  if (!sections.length) return
+
+  // Get the actual height of the sticky navbar (adjust as needed)
+  const navBar = document.querySelector('nav')
+  const navHeight = navBar ? navBar.offsetHeight : 80
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      // Find the section that is most visible in the viewport
+      let visibleSection = null
+      let maxRatio = 0
+
+      for (const entry of entries) {
+        if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+          maxRatio = entry.intersectionRatio
+          visibleSection = entry.target.id
+        }
+      }
+
+      // If no section is intersecting, check the topmost section in viewport
+      if (!visibleSection) {
+        for (const entry of entries) {
+          const rect = entry.target.getBoundingClientRect()
+          if (rect.top <= navHeight + 10 && rect.bottom > navHeight + 10) {
+            visibleSection = entry.target.id
+            break
+          }
+        }
+      }
+
+      if (visibleSection && activeSection.value !== visibleSection) {
+        activeSection.value = visibleSection
+      }
+    },
+    {
+      rootMargin: `-${navHeight}px 0px -30% 0px`, // dynamic offset based on navbar height
+      threshold: [0, 0.1, 0.3, 0.5, 0.7, 1]
+    }
+  )
+
+  sections.forEach((section) => observer?.observe(section))
+}
+
+function cleanupObserver() {
+  if (observer) {
+    observer.disconnect()
+    observer = null
+  }
+}
+
+// Watch route changes
+watch(() => route.path, async (newPath) => {
+  if (newPath !== '/') {
+    cleanupObserver()
+    activeSection.value = 'home' // reset when leaving homepage
+  } else {
+    await nextTick()
+    initIntersectionObserver()
+    updateScrollProgress()
+  }
+})
+
+// Handle hash on homepage after navigation
+function handleHashOnHome() {
+  if (route.path === '/' && route.hash) {
+    const id = route.hash.slice(1)
+    // Wait for DOM to be ready
+    setTimeout(() => {
+      const element = document.getElementById(id)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        setActive(id)
+        // Clear hash without jumping
+        history.pushState(null, '', '/')
+      }
+    }, 150)
+  }
+}
+
+onMounted(() => {
+  initIntersectionObserver()
+  window.addEventListener('scroll', updateScrollProgress)
   document.addEventListener('click', handleClickOutside)
+  updateScrollProgress()
+  handleHashOnHome()
 })
 
 onUnmounted(() => {
-  observers.forEach((obs) => obs.disconnect())
-  window.removeEventListener('scroll', handleScroll)
+  cleanupObserver()
+  window.removeEventListener('scroll', updateScrollProgress)
   document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
 <template>
-  <!-- Scroll Progress -->
-  <div class="fixed left-0 top-0 w-1 h-full bg-gray-800 z-[60]">
+  <!-- Vertical Scroll Progress Bar (only show on homepage) -->
+  <div v-if="route.path === '/'" class="fixed left-0 top-0 w-1 h-full bg-gray-800 z-[60]">
     <div
-      class="bg-[#2563EB] w-full transition-all duration-150"
+      class="bg-gradient-to-b from-blue-500 to-blue-600 w-full transition-all duration-150"
       :style="{ height: `${scrollProgress}%` }"
     ></div>
   </div>
 
-  <!-- NAV -->
-  <nav class="border-b border-gray-800 bg-black/90 backdrop-blur-sm sticky top-0 z-50 relative">
+  <!-- Navigation Bar -->
+  <nav class="border-b border-gray-800 bg-black/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
 
       <!-- Logo -->
-      <a href="#home" class="block">
+      <a 
+        href="#"
+        class="block transition-transform duration-300 hover:scale-105"
+        @click.prevent="navigateToSection('home')"
+      >
         <img
           src="/assets/Screenshot%202026-02-12%20170409.png"
           alt="Mmuso Code"
@@ -94,23 +195,23 @@ onUnmounted(() => {
         <a
           v-for="item in navItems"
           :key="item.id"
-          :href="`#${item.id}`"
-          class="relative hover:text-[#2563EB] transition"
-          :class="{ 'text-[#2563EB]': activeSection === item.id }"
-          @click="setActive(item.id)"
+          href="#"
+          class="relative hover:text-[#2563EB] transition-all duration-300"
+          :class="{ 'text-[#2563EB]': activeSection === item.id && route.path === '/' }"
+          @click.prevent="navigateToSection(item.id)"
         >
           {{ item.label }}
-
           <span
-            class="absolute left-0 -bottom-2 w-full h-0.5 bg-[#2563EB] transition-transform duration-300 origin-left"
+            v-if="route.path === '/'"
+            class="absolute left-0 -bottom-2 w-full h-0.5 bg-gradient-to-r from-blue-500 to-blue-600 transition-transform duration-300 origin-left"
             :class="activeSection === item.id ? 'scale-x-100' : 'scale-x-0'"
           ></span>
         </a>
       </div>
 
-      <!-- Mobile Toggle -->
+      <!-- Mobile Toggle Button -->
       <button
-        class="md:hidden text-gray-400 hover:text-white transition"
+        class="md:hidden text-gray-400 hover:text-white transition-all duration-300"
         @click="toggleMobile"
         aria-label="Toggle menu"
       >
@@ -119,7 +220,7 @@ onUnmounted(() => {
 
     </div>
 
-    <!-- Mobile Dropdown -->
+    <!-- Mobile Dropdown Menu -->
     <Transition
       enter-active-class="transition duration-200 ease-out"
       enter-from-class="opacity-0 -translate-y-2 scale-95"
@@ -129,33 +230,32 @@ onUnmounted(() => {
       leave-to-class="opacity-0 -translate-y-2 scale-95"
     >
       <div v-if="mobileOpen" class="md:hidden absolute right-4 top-full mt-2 z-50">
-
-        <div class="bg-black/80 backdrop-blur-lg border border-white/10 rounded-xl overflow-hidden min-w-[210px] shadow-2xl shadow-black/60">
-
+        <div class="bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden min-w-[220px] shadow-2xl shadow-black/60">
           <a
             v-for="item in navItems"
             :key="item.id"
-            :href="`#${item.id}`"
-            class="flex items-center gap-3 px-5 py-3 text-gray-300 font-medium border-b border-gray-800/60 last:border-0 hover:bg-gray-900 hover:text-[#2563EB] transition active:scale-[0.97]"
-            :class="{ 'text-[#2563EB] bg-gray-900/50': activeSection === item.id }"
-            @click="setActive(item.id)"
+            href="#"
+            class="flex items-center gap-3 px-5 py-3 text-gray-300 font-medium border-b border-gray-800/50 last:border-0 hover:bg-gray-900/70 hover:text-[#2563EB] transition-all duration-200 active:scale-[0.98]"
+            :class="{ 'text-[#2563EB] bg-gray-900/50': activeSection === item.id && route.path === '/' }"
+            @click.prevent="navigateToSection(item.id)"
           >
-
             <i :class="`fas ${item.icon} text-xs opacity-70`"></i>
-
             <span
-              class="w-1.5 h-1.5 rounded-full bg-[#2563EB] transition-opacity"
-              :class="activeSection === item.id ? 'opacity-100' : 'opacity-0'"
+              class="w-1.5 h-1.5 rounded-full bg-[#2563EB] transition-opacity duration-200"
+              :class="activeSection === item.id && route.path === '/' ? 'opacity-100' : 'opacity-0'"
             ></span>
-
             {{ item.label }}
-
           </a>
-
         </div>
-
       </div>
     </Transition>
 
   </nav>
 </template>
+
+<style scoped>
+.logo-img {
+  max-height: 48px;
+  width: auto;
+}
+</style>

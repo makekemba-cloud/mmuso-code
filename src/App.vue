@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 import PageLoader  from './components/PageLoader.vue'
 import Popup       from './components/Popup.vue'
 import Nav         from './components/Nav.vue'
@@ -18,13 +19,14 @@ import ScrollToTop from './components/ScrollToTop.vue'
 import WhatsApp    from './components/WhatsApp.vue'
 
 const popupRef = ref<InstanceType<typeof Popup> | null>(null)
+const route = useRoute()
 
 function showPopup() {
   popupRef.value?.show()
 }
 
-// ── Scroll reveal ────────────────────────────────────
-onMounted(() => {
+// Scroll reveal logic
+function initScrollReveal() {
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -37,6 +39,22 @@ onMounted(() => {
     { threshold: 0.1 }
   )
   document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
+}
+
+// Initial run if on home page
+onMounted(() => {
+  if (route.path === '/') {
+    initScrollReveal()
+  }
+})
+
+// Watch for route changes: when we return to home, re-run scroll reveal
+watch(() => route.path, (newPath) => {
+  if (newPath === '/') {
+    nextTick(() => {
+      initScrollReveal()
+    })
+  }
 })
 </script>
 
@@ -45,16 +63,24 @@ onMounted(() => {
     <PageLoader />
     <Popup ref="popupRef" />
     <Nav />
-    <div class="reveal"><Hero /></div>
-    <div class="reveal"><Stats /></div>
-    <div class="reveal"><About /></div>
-    <div class="reveal"><Expertise /></div>
-    <div class="reveal"><Process /></div>
-    <div class="reveal"><Approach /></div>  
-    <div class="reveal"><Projects /></div>
-    <div class="reveal"><WhyUs /></div>
-    <div class="reveal"><CTA /></div>
-    <div class="reveal"><Contact @show-popup="showPopup" /></div>
+
+    <!-- Show homepage content ONLY when on root path -->
+    <div v-if="route.path === '/'">
+      <div class="reveal"><Hero /></div>
+      <div class="reveal"><Stats /></div>
+      <div class="reveal"><About /></div>
+      <div class="reveal"><Expertise /></div>
+      <div class="reveal"><Process /></div>
+      <div class="reveal"><Approach /></div>
+      <div class="reveal"><Projects /></div>
+      <div class="reveal"><WhyUs /></div>
+      <div class="reveal"><CTA /></div>
+      <div class="reveal"><Contact @show-popup="showPopup" /></div>
+    </div>
+
+    <!-- Show legal pages and other routes here -->
+    <router-view v-else @show-popup="showPopup" />
+
     <Footer />
     <ScrollToTop />
     <WhatsApp />
@@ -62,7 +88,6 @@ onMounted(() => {
 </template>
 
 <style>
-/* Scroll reveal */
 .reveal {
   opacity: 0;
   transform: translateY(30px);

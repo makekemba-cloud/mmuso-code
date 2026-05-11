@@ -1,134 +1,372 @@
-<script setup lang="ts">
-interface StackCategory {
-  icon: string
-  title: string
-  pills: string[]
-  color: string
-  glow: string
-}
-
-const categories: StackCategory[] = [
-  {
-    icon: 'fa-globe',
-    title: 'Web Development',
-    pills: [
-      'React.js', 'Next.js', 'Vue 3', 'TypeScript', 'Tailwind CSS', 
-      'ASP.NET Core', 'C#', 'Node.js', 'Vite', 'Razor Pages', 'REST APIs'
-    ],
-    color: 'from-blue-500/20 to-transparent',
-    glow: 'group-hover:shadow-blue-500/20',
-  },
-  {
-    icon: 'fa-database',
-    title: 'Database Management',
-    pills: [
-      'PostgreSQL', 'SQL Server', 'Supabase DB', 'Stored Procedures', 
-      'Indexes', 'ERD Design'
-    ],
-    color: 'from-violet-500/20 to-transparent',
-    glow: 'group-hover:shadow-violet-500/20',
-  },
-  {
-    icon: 'fa-cloud',
-    title: 'Cloud & Hosting',
-    pills: [
-      'Supabase', 'Vercel', 'HostAfrica', 'IIS', 'Azure DevOps', 'GitHub', 'Netlify'
-    ],
-    color: 'from-sky-500/20 to-transparent',
-    glow: 'group-hover:shadow-sky-500/20',
-  },
-  {
-    icon: 'fa-lock',
-    title: 'Auth & Security',
-    pills: [
-      'Supabase Auth', 'OAuth', 'Google OAuth 2.0', 'Role-Based Access Control (RBAC)', 
-      'Row Level Security', 'JWT', 'Input Validation'
-    ],
-    color: 'from-emerald-500/20 to-transparent',
-    glow: 'group-hover:shadow-emerald-500/20',
-  },
-  {
-    icon: 'fa-paint-brush',
-    title: 'UI/UX Design',
-    pills: [
-      'Figma', 'Responsive Layouts', 'Dashboards', 'Forms & Validation', 
-      'User-Centered Design', 'Intuitive UX'
-    ],
-    color: 'from-pink-500/20 to-transparent',
-    glow: 'group-hover:shadow-pink-500/20',
-  },
-  {
-    icon: 'fa-tools',
-    title: 'Dev Tools & Monitoring',
-    pills: [
-      'VS Code', 'Visual Studio', 'Git', 'GitHub Actions', 
-      'Postman', 'npm', 'ESLint', 'Sentry'
-    ],
-    color: 'from-orange-500/20 to-transparent',
-    glow: 'group-hover:shadow-orange-500/20',
-  },
-]
-</script>
-
 <template>
-  <section id="stack" class="bg-[#000000] py-20 border-y border-gray-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <section class="tech-stack-premium relative overflow-hidden bg-black py-20 border-y border-gray-800">
+    <!-- Floating particles canvas -->
+    <canvas ref="particleCanvas" class="absolute inset-0 pointer-events-none z-0"></canvas>
 
+    <!-- Blur fade edges (Netflix style) -->
+    <div class="absolute inset-y-0 left-0 w-32 z-10 bg-gradient-to-r from-black to-transparent pointer-events-none"></div>
+    <div class="absolute inset-y-0 right-0 w-32 z-10 bg-gradient-to-l from-black to-transparent pointer-events-none"></div>
+
+    <!-- Header -->
+    <div class="relative z-20 text-center mb-16">
       <div class="flex justify-center mb-4">
         <span class="section-badge">
           <span class="pulse-dot"></span>
-          <span class="text-sm text-[#2563EB] font-semibold">Technology Stack</span>
+          <span class="text-sm text-blue-500 font-semibold">Technology Stack</span>
         </span>
       </div>
-
-      <h2 class="text-3xl md:text-4xl font-bold text-center text-white mb-4">
-        Our <span class="text-[#2563EB]">Technology</span> Stack
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+        Our <span class="text-blue-500">Technology</span> Stack
       </h2>
-      <p class="text-center text-gray-400 max-w-3xl mx-auto mb-16 text-lg">
-        We leverage cutting-edge technologies and industry-leading tools to build robust, scalable solutions that stand the test of time.
+      <p class="text-gray-400 max-w-3xl mx-auto text-lg">
+        We leverage cutting-edge technologies and industry-leading tools.
       </p>
+    </div>
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div
-          v-for="cat in categories"
-          :key="cat.title"
-          :class="`group relative bg-[#0a0a0a] p-7 rounded-2xl border border-gray-800 hover:border-gray-600 transition-all duration-300 hover:shadow-2xl ${cat.glow} overflow-hidden`"
-        >
-          <!-- gradient top bar -->
-          <div :class="`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${cat.color.replace('to-transparent', 'to-blue-400')}`"></div>
-
-          <!-- background glow blob -->
-          <div :class="`absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br ${cat.color} blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`"></div>
-
-          <div class="relative">
-            <div class="flex items-center gap-4 mb-5">
-              <div class="w-12 h-12 bg-[#2563EB]/10 border border-[#2563EB]/30 rounded-xl flex items-center justify-center text-[#2563EB] text-xl group-hover:bg-[#2563EB]/20 transition-colors duration-300">
-                <i :class="`fas ${cat.icon}`"></i>
-              </div>
-              <h3 class="text-lg font-semibold text-white">{{ cat.title }}</h3>
-            </div>
-
-            <div class="flex flex-wrap gap-2">
-              <span
-                v-for="pill in cat.pills"
-                :key="pill"
-                class="px-3 py-1.5 rounded-full text-xs font-medium bg-gray-900 border border-gray-700 text-gray-300 hover:border-[#2563EB]/60 hover:text-[#2563EB] hover:bg-[#2563EB]/5 transition-all duration-200 cursor-default"
-              >{{ pill }}</span>
-            </div>
+    <!-- Rows with 3D perspective -->
+    <div class="relative z-20 perspective-container">
+      <!-- Row 1 - Left -->
+      <div class="marquee-row-wrapper mb-8 group" data-speed="22" data-direction="left">
+        <div class="marquee-track">
+          <div
+            v-for="(item, i) in duplicatedRow1"
+            :key="`r1-${i}`"
+            class="tech-card"
+            :style="{ '--brand-color': getBrandColor(item.name) }"
+          >
+            <i :class="[item.icon, 'text-xl']" :style="{ color: getBrandColor(item.name) }"></i>
+            <span>{{ item.name }}</span>
           </div>
         </div>
       </div>
 
-      <div class="mt-16 text-center">
-        <p class="text-xl text-gray-300 mb-6">Ready to leverage these technologies for your project?</p>
-        <a
-          href="#contact"
-          class="inline-flex items-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-medium hover:bg-[#1d4ed8] transition text-lg shadow-lg shadow-[#2563EB]/30 hover:shadow-[#2563EB]/50 hover-lift"
-        >
-          Let's Build Together <i class="fas fa-arrow-right"></i>
-        </a>
+      <!-- Row 2 - Right -->
+      <div class="marquee-row-wrapper mb-8 group" data-speed="26" data-direction="right">
+        <div class="marquee-track">
+          <div
+            v-for="(item, i) in duplicatedRow2"
+            :key="`r2-${i}`"
+            class="tech-card"
+            :style="{ '--brand-color': getBrandColor(item.name) }"
+          >
+            <i :class="[item.icon, 'text-xl']" :style="{ color: getBrandColor(item.name) }"></i>
+            <span>{{ item.name }}</span>
+          </div>
+        </div>
       </div>
 
+      <!-- Row 3 - Left Faster -->
+      <div class="marquee-row-wrapper group" data-speed="18" data-direction="left">
+        <div class="marquee-track">
+          <div
+            v-for="(item, i) in duplicatedRow3"
+            :key="`r3-${i}`"
+            class="tech-card"
+            :style="{ '--brand-color': getBrandColor(item.name) }"
+          >
+            <i :class="[item.icon, 'text-xl']" :style="{ color: getBrandColor(item.name) }"></i>
+            <span>{{ item.name }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+import gsap from 'gsap'
+
+// ---------- Brand Color Mapping ----------
+const getBrandColor = (name: string): string => {
+  const colors: Record<string, string> = {
+    'React': '#61DAFB',
+    'Next.js': '#000000',
+    'Vue 3': '#42B883',
+    'TypeScript': '#3178C6',
+    'JavaScript': '#F7DF1E',
+    'Tailwind CSS': '#38BDF8',
+    'Bootstrap': '#7952B3',
+    'HTML/CSS': '#E34F26',
+    'ASP.NET Core': '#512BD4',
+    'C#': '#239120',
+    'Node.js': '#339933',
+    'Express': '#000000',
+    'Python': '#3776AB',
+    'Java': '#007396',
+    'PHP': '#777BB4',
+    'Vite': '#646CFF',
+    'PostgreSQL': '#4169E1',
+    'MongoDB': '#47A248',
+    'Docker': '#2496ED',
+    'GitHub': '#181717',
+    'REST APIs': '#FF6C37',
+    'GraphQL': '#E10098',
+    'CI/CD': '#0A5C8E',
+    'VS Code': '#007ACC'
+  }
+  return colors[name] || '#3B82F6' // fallback blue (used rarely)
+}
+
+// ---------- Data ----------
+interface TechItem {
+  name: string
+  icon: string
+}
+
+const row1Items: TechItem[] = [
+  { name: 'React', icon: 'fa-brands fa-react' },
+  { name: 'Next.js', icon: 'fa-solid fa-n' },
+  { name: 'Vue 3', icon: 'fa-brands fa-vuejs' },
+  { name: 'TypeScript', icon: 'fa-solid fa-code' },
+  { name: 'JavaScript', icon: 'fa-brands fa-js' },
+  { name: 'Tailwind CSS', icon: 'fa-solid fa-wind' },
+  { name: 'Bootstrap', icon: 'fa-brands fa-bootstrap' },
+  { name: 'HTML/CSS', icon: 'fa-solid fa-code' },
+]
+
+const row2Items: TechItem[] = [
+  { name: 'ASP.NET Core', icon: 'fa-solid fa-code' },
+  { name: 'C#', icon: 'fa-solid fa-hashtag' },
+  { name: 'Node.js', icon: 'fa-brands fa-node-js' },
+  { name: 'Express', icon: 'fa-solid fa-server' },
+  { name: 'Python', icon: 'fa-brands fa-python' },
+  { name: 'Java', icon: 'fa-brands fa-java' },
+  { name: 'PHP', icon: 'fa-brands fa-php' },
+  { name: 'Vite', icon: 'fa-solid fa-bolt' },
+]
+
+const row3Items: TechItem[] = [
+  { name: 'PostgreSQL', icon: 'fa-solid fa-database' },
+  { name: 'MongoDB', icon: 'fa-solid fa-leaf' },
+  { name: 'Docker', icon: 'fa-brands fa-docker' },
+  { name: 'GitHub', icon: 'fa-brands fa-github' },
+  { name: 'REST APIs', icon: 'fa-solid fa-plug' },
+  { name: 'GraphQL', icon: 'fa-solid fa-diagram-project' },
+  { name: 'CI/CD', icon: 'fa-solid fa-gears' },
+  { name: 'VS Code', icon: 'fa-solid fa-code' },
+]
+
+const duplicatedRow1 = [...row1Items, ...row1Items]
+const duplicatedRow2 = [...row2Items, ...row2Items]
+const duplicatedRow3 = [...row3Items, ...row3Items]
+
+// ---------- GSAP Animations ----------
+let animations: gsap.core.Tween[] = []
+
+const initMarqueeAnimations = () => {
+  animations.forEach(anim => anim.kill())
+  animations = []
+
+  const wrappers = document.querySelectorAll('.marquee-row-wrapper')
+  wrappers.forEach((wrapper) => {
+    const track = wrapper.querySelector('.marquee-track') as HTMLElement
+    if (!track) return
+
+    const speed = parseFloat((wrapper as HTMLElement).dataset.speed || '20')
+    const direction = (wrapper as HTMLElement).dataset.direction || 'left'
+    
+    const trackWidth = track.scrollWidth / 2
+    const distance = trackWidth
+
+    let startX: number, endX: number
+    if (direction === 'left') {
+      startX = 0
+      endX = -distance
+    } else {
+      startX = -distance
+      endX = 0
+    }
+
+    gsap.set(track, { x: startX })
+    
+    const tween = gsap.to(track, {
+      x: endX,
+      duration: speed,
+      ease: "none",
+      repeat: -1,
+      modifiers: {
+        x: (x) => {
+          let val = parseFloat(x)
+          if (direction === 'left') {
+            if (val <= -distance) val += distance
+            if (val >= 0) val -= distance
+          } else {
+            if (val >= 0) val -= distance
+            if (val <= -distance) val += distance
+          }
+          return val + 'px'
+        }
+      }
+    })
+    
+    animations.push(tween)
+
+    wrapper.addEventListener('mouseenter', () => tween.pause())
+    wrapper.addEventListener('mouseleave', () => tween.resume())
+  })
+}
+
+// ---------- Floating Particles ----------
+const particleCanvas = ref<HTMLCanvasElement | null>(null)
+let particleCtx: CanvasRenderingContext2D | null = null
+let particleAnimationId: number | null = null
+let particles: { x: number; y: number; radius: number; alpha: number; vx: number; vy: number }[] = []
+
+const initParticles = () => {
+  if (!particleCanvas.value) return
+  const canvas = particleCanvas.value
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+  particleCtx = canvas.getContext('2d')
+  
+  particles = []
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 2 + 1,
+      alpha: Math.random() * 0.4 + 0.1,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.2
+    })
+  }
+  animateParticles()
+}
+
+const animateParticles = () => {
+  if (!particleCtx || !particleCanvas.value) return
+  const canvas = particleCanvas.value
+  particleCtx.clearRect(0, 0, canvas.width, canvas.height)
+  
+  for (let p of particles) {
+    p.x += p.vx
+    p.y += p.vy
+    if (p.x < 0) p.x = canvas.width
+    if (p.x > canvas.width) p.x = 0
+    if (p.y < 0) p.y = canvas.height
+    if (p.y > canvas.height) p.y = 0
+    
+    particleCtx.beginPath()
+    particleCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
+    particleCtx.fillStyle = `rgba(59, 130, 246, ${p.alpha})`
+    particleCtx.fill()
+  }
+  particleAnimationId = requestAnimationFrame(animateParticles)
+}
+
+const resizeParticles = () => {
+  if (!particleCanvas.value) return
+  particleCanvas.value.width = window.innerWidth
+  particleCanvas.value.height = window.innerHeight
+  initParticles()
+}
+
+// ---------- Lifecycle ----------
+onMounted(() => {
+  initMarqueeAnimations()
+  initParticles()
+  window.addEventListener('resize', () => {
+    resizeParticles()
+    initMarqueeAnimations()
+  })
+})
+
+onUnmounted(() => {
+  animations.forEach(anim => anim.kill())
+  if (particleAnimationId) cancelAnimationFrame(particleAnimationId)
+  window.removeEventListener('resize', resizeParticles)
+})
+</script>
+
+<style scoped>
+.perspective-container {
+  perspective: 800px;
+  transform-style: preserve-3d;
+}
+
+.marquee-row-wrapper {
+  transform: rotateX(2deg) translateZ(10px);
+  transition: transform 0.3s ease;
+}
+
+.marquee-row-wrapper:hover {
+  transform: rotateX(0deg) translateZ(20px);
+}
+
+.marquee-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Tech card - uses CSS custom property for brand color */
+.tech-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.8rem;
+  background: rgba(10, 10, 15, 0.7);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3rem;
+  color: #e2e8f0;
+  font-weight: 500;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: default;
+}
+
+/* Hover effect using the per-card brand color (CSS variable) */
+.tech-card:hover {
+  transform: scale(1.05);
+  background: rgba(20, 25, 40, 0.9);
+  border-color: var(--brand-color, #3b82f6);
+  box-shadow: 0 0 20px var(--brand-color, #3b82f6);
+  color: white;
+}
+
+/* Icon hover glow matches brand color */
+.tech-card:hover i {
+  filter: drop-shadow(0 0 6px var(--brand-color, #3b82f6));
+}
+
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 0.3rem 1rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+@media (max-width: 768px) {
+  .tech-card {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.8rem;
+    gap: 0.5rem;
+  }
+  .tech-card i {
+    font-size: 1rem;
+  }
+}
+</style>
