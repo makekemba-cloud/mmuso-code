@@ -3,6 +3,13 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   plugins: [vue()],
+
+  server: {
+    proxy: {
+      '/api': 'http://localhost:3001',
+    },
+  },
+
   build: {
     rollupOptions: {
       // Make sure font files are handled
@@ -11,6 +18,7 @@ export default defineConfig({
           if (/\.(woff|woff2|ttf|eot)$/.test(assetInfo.name ?? '')) {
             return 'assets/fonts/[name]-[hash][extname]'
           }
+
           return 'assets/[name]-[hash][extname]'
         },
       },

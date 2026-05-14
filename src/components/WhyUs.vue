@@ -9,22 +9,22 @@ const advantages: Advantage[] = [
   {
     icon: 'fa-rocket',
     title: 'Modern Technologies',
-    description: 'We build with Next.js, TypeScript, Supabase, and ASP.NET — ensuring performance, scalability, and future‑proof systems.',
+    description: 'Our solutions are built with modern technologies that ensure speed, reliability, security, and long-term scalability.',
   },
-  {
+ {
     icon: 'fa-shield-alt',
     title: 'Security First',
-    description: 'Authentication, role‑based access, and database‑level security keep your platform safe, compliant, and reliable.',
+    description: 'We prioritise security with protected authentication, role-based access control, and reliable data management to keep your platform safe and trustworthy.',
   },
   {
     icon: 'fa-bolt',
     title: 'Fast & Scalable',
-    description: 'Every system is architected to grow with your business using optimised cloud infrastructure and CI/CD pipelines.',
+    description: 'Our systems are designed for speed, performance, and scalability — allowing your business to grow without limitations.',
   },
   {
     icon: 'fa-handshake',
-    title: 'Client‑Focused Partnership',
-    description: 'We work beside you from idea to launch — transparent, responsive, and committed to your success.',
+    title: 'Client-Focused Partnership',
+    description: 'We work closely with you from concept to launch, delivering transparent communication, reliable support, and long-term value.',
   },
 ]
 

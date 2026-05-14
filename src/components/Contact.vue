@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import emailjs from '@emailjs/browser'
 
 const emit = defineEmits<{ (e: 'showPopup'): void }>()
 
@@ -17,18 +16,25 @@ const form = ref({
 async function handleSubmit() {
   if (!formRef.value) return
   sending.value = true
+
   try {
-    await emailjs.sendForm(
-      import.meta.env.VITE_EMAILJS_SERVICE_ID,
-      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-      formRef.value,
-      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-    )
+    const response = await fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form.value),
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || 'Failed to send email')
+    }
+
+    // Success – show popup and reset form
     emit('showPopup')
     form.value = { name: '', email: '', title: '', message: '' }
   } catch (err) {
-    alert('Failed. Please email info@mmusocode.co.za directly.')
     console.error(err)
+    alert('Failed to send message. Please email info@mmusocode.co.za directly.')
   } finally {
     sending.value = false
   }
@@ -38,7 +44,7 @@ const contactInfo = [
   { icon: 'fa-envelope',       label: 'Email',          value: 'info@mmusocode.co.za',        href: 'mailto:info@mmusocode.co.za' },
   { icon: 'fa-phone-alt',      label: 'Phone',          value: '+27 79 118 9866',              href: 'tel:+27791189866' },
   { icon: 'fa-map-marker-alt', label: 'Location',       value: 'Masia, Limpopo, South Africa', href: null },
-  { icon: 'fa-clock',          label: 'Business Hours', value: 'Monday - Sunday: 24/7',        href: null },
+  { icon: 'fa-clock',          label: 'Business Hours', value: 'Monday – Friday: 9:00 AM – 5:00 PM',        href: null },
 ]
 
 const socials = [
