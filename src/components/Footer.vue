@@ -14,11 +14,11 @@ const navLinks = [
 
 // Social links
 const socials = [
-  { icon: 'fab fa-github',      href: 'https://github.com/makekemba-cloud',        label: 'GitHub' },
-  { icon: 'fab fa-linkedin-in', href: 'https://linkedin.com/in/makekemba-vhutali', label: 'LinkedIn' },
-  { icon: 'fab fa-twitter',     href: 'https://x.com/Makekembavhutal',             label: 'Twitter' },
-  { icon: 'fab fa-instagram',   href: 'https://www.instagram.com/mmuso.0/',        label: 'Instagram' },
-  { icon: 'fab fa-facebook-f',  href: 'https://www.facebook.com/mmusocode',          label: 'Facebook' },
+   { icon: 'fab fa-linkedin-in', href: 'https://linkedin.com/company/mmusocode', label: 'LinkedIn',  color: 'hover:text-blue-400 hover:border-blue-400' },
+  { icon: 'fab fa-whatsapp',    href: 'https://wa.me/27791189866',                 label: 'WhatsApp',  color: 'hover:text-green-400 hover:border-green-400' },
+  { icon: 'fab fa-facebook-f',  href: 'https://www.facebook.com/mmusocode',          label: 'Facebook',  color: 'hover:text-blue-500 hover:border-blue-500' },
+  { icon: 'fab fa-instagram',   href: 'https://www.instagram.com/mmusocode/',        label: 'Instagram', color: 'hover:text-pink-400 hover:border-pink-400' },
+
 ]
 
 // Scroll-to-top logic
@@ -109,7 +109,14 @@ function scrollToTop() {
           <router-link to="/registration" class="text-gray-500 transition-all duration-300 hover:text-[#2563EB] hover:-translate-y-0.5 active:text-[#2563EB]">Registration</router-link>
         </div>
 
-        <p class="text-[11px] sm:text-xs text-gray-600">Built with Vue 3 + TypeScript + Tailwind CSS</p>
+        <!-- Built with tech stack – each "+" is a link to admin login -->
+        <p class="text-[11px] sm:text-xs text-gray-600">
+          Built with Vue 3
+          <router-link to="/admin/login" class="admin-login-link">+</router-link>
+          TypeScript
+          <router-link to="/admin/login" class="admin-login-link">+</router-link>
+          Tailwind CSS
+        </p>
       </div>
 
       <!-- Row 2: Founder credit + Registration number - mobile responsive -->

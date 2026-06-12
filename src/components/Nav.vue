@@ -173,14 +173,15 @@ onUnmounted(() => {
     ></div>
   </div>
 
-  <!-- Navigation Bar -->
-  <nav class="border-b border-gray-800 bg-black/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-
-      <!-- Logo -->
+  <!-- Floating Cylinder Navigation Bar -->
+  <nav class="floating-nav sticky top-4 mx-auto w-[calc(100%-2rem)] max-w-7xl z-50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/20">
+    <!-- Inner container with flex layout -->
+    <div class="w-full flex items-center justify-between px-5 py-1.5 md:px-6">
+      
+      <!-- Logo with hover effect -->
       <a 
         href="#"
-        class="block transition-transform duration-300 hover:scale-105"
+        class="block transition-all duration-300 hover:scale-105 hover:drop-shadow-lg"
         @click.prevent="navigateToSection('home')"
       >
         <img
@@ -190,16 +191,19 @@ onUnmounted(() => {
         >
       </a>
 
-      <!-- Desktop Navigation -->
+      <!-- Desktop Navigation Links with enhanced hover -->
       <div class="hidden md:flex items-center space-x-8 text-gray-300 font-medium">
         <a
-          v-for="item in navItems"
-          :key="item.id"
-          href="#"
-          class="relative hover:text-[#2563EB] transition-all duration-300"
-          :class="{ 'text-[#2563EB]': activeSection === item.id && route.path === '/' }"
-          @click.prevent="navigateToSection(item.id)"
-        >
+         v-for="item in navItems"
+  :key="item.id"
+  href="#"
+  class="nav-link relative hover:text-[#2563EB] transition-all duration-300"
+  :class="{ 
+    'text-[#2563EB]': activeSection === item.id && route.path === '/',
+    'active': activeSection === item.id && route.path === '/'
+  }"
+  @click.prevent="navigateToSection(item.id)"
+>
           {{ item.label }}
           <span
             v-if="route.path === '/'"
@@ -209,9 +213,9 @@ onUnmounted(() => {
         </a>
       </div>
 
-      <!-- Mobile Toggle Button -->
+      <!-- Mobile Toggle Button with hover effect -->
       <button
-        class="md:hidden text-gray-400 hover:text-white transition-all duration-300"
+        class="md:hidden text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"
         @click="toggleMobile"
         aria-label="Toggle menu"
       >
@@ -220,7 +224,7 @@ onUnmounted(() => {
 
     </div>
 
-    <!-- Mobile Dropdown Menu -->
+    <!-- Mobile Dropdown Menu with smooth animation -->
     <Transition
       enter-active-class="transition duration-200 ease-out"
       enter-from-class="opacity-0 -translate-y-2 scale-95"
@@ -255,7 +259,82 @@ onUnmounted(() => {
 
 <style scoped>
 .logo-img {
-  max-height: 48px;
+  max-height: 40px;   /* keeps the navbar thin */
   width: auto;
+  transition: transform 0.2s ease;
+}
+
+/* Floating Cylinder Navigation – Wide & Thin */
+.floating-nav {
+  /* Cylinder tube background with soft gradient */
+  background: linear-gradient(105deg, 
+    rgba(10, 10, 15, 0.92) 0%,
+    rgba(20, 20, 30, 0.92) 20%,
+    rgba(30, 30, 45, 0.92) 50%,
+    rgba(20, 20, 30, 0.92) 80%,
+    rgba(10, 10, 15, 0.92) 100%
+  );
+  backdrop-filter: blur(16px);
+  border-radius: 80px;   /* soft tube ends */
+  
+  /* Inner shadows for "caved sides" cylinder look */
+  box-shadow: inset 30px 0 30px -20px rgba(0, 0, 0, 0.7),
+              inset -30px 0 30px -20px rgba(0, 0, 0, 0.7),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+/* Blue lining (glow + border) on hover */
+.floating-nav:hover {
+  box-shadow: inset 25px 0 25px -18px rgba(0, 0, 0, 0.5),
+              inset -25px 0 25px -18px rgba(0, 0, 0, 0.5),
+              0 0 0 2px rgba(37, 99, 235, 0.8);   /* ← blue lining */
+  background: linear-gradient(105deg, 
+    rgba(15, 15, 22, 0.98) 0%,
+    rgba(25, 25, 38, 0.98) 20%,
+    rgba(35, 35, 52, 0.98) 50%,
+    rgba(25, 25, 38, 0.98) 80%,
+    rgba(15, 15, 22, 0.98) 100%
+  );
+  border-color: rgba(37, 99, 235, 0.3);
+}
+
+/* Individual nav link styles */
+.nav-link {
+  position: relative;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  transform: translateY(-1px);
+  text-shadow: 0 0 8px rgba(37, 99, 235, 0.5);
+}
+
+/* Active link text glow (replaces invalid selector) */
+.nav-link.active {
+  text-shadow: 0 0 6px rgba(37, 99, 235, 0.4);
+}
+
+/* Mobile menu button active effect */
+button:active {
+  transform: scale(0.95);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .floating-nav {
+    border-radius: 60px;
+  }
+  .logo-img {
+    max-height: 32px;
+  }
+}
+
+/* Mobile dropdown backdrop */
+.md\:hidden .rounded-2xl {
+  backdrop-filter: blur(20px);
 }
 </style>

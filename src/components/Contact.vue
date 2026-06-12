@@ -18,7 +18,7 @@ async function handleSubmit() {
   sending.value = true
 
   try {
-    const response = await fetch('/api/send-email', {
+    const response = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form.value),
@@ -48,13 +48,10 @@ const contactInfo = [
 ]
 
 const socials = [
-  { icon: 'fas fa-envelope',    href: 'mailto:info@mmusocode.co.za',               label: 'Email',     color: 'hover:text-red-400 hover:border-red-400' },
-  { icon: 'fab fa-linkedin-in', href: 'https://linkedin.com/in/makekemba-vhutali', label: 'LinkedIn',  color: 'hover:text-blue-400 hover:border-blue-400' },
-  { icon: 'fab fa-github',      href: 'https://github.com/makekemba-cloud',        label: 'GitHub',    color: 'hover:text-gray-300 hover:border-gray-300' },
-  { icon: 'fab fa-twitter',     href: 'https://x.com/Makekembavhutal',             label: 'Twitter',   color: 'hover:text-sky-400 hover:border-sky-400' },
+  { icon: 'fab fa-linkedin-in', href: 'https://linkedin.com/company/mmusocode', label: 'LinkedIn',  color: 'hover:text-blue-400 hover:border-blue-400' },
   { icon: 'fab fa-whatsapp',    href: 'https://wa.me/27791189866',                 label: 'WhatsApp',  color: 'hover:text-green-400 hover:border-green-400' },
   { icon: 'fab fa-facebook-f',  href: 'https://www.facebook.com/mmusocode',          label: 'Facebook',  color: 'hover:text-blue-500 hover:border-blue-500' },
-  { icon: 'fab fa-instagram',   href: 'https://www.instagram.com/mmuso.0/',        label: 'Instagram', color: 'hover:text-pink-400 hover:border-pink-400' },
+  { icon: 'fab fa-instagram',   href: 'https://www.instagram.com/mmusocode/',        label: 'Instagram', color: 'hover:text-pink-400 hover:border-pink-400' },
 ]
 
 const mapSrc = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3485.9946888039303!2d30.30841997509711!3d-23.18999477905678!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1ec5d31484f30f49%3A0xf221773a72793c82!2s341%20Makekemba!5e1!3m2!1sen!2sza!4v1772999661032!5m2!1sen!2sza'
