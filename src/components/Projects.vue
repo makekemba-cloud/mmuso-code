@@ -37,6 +37,12 @@ const projects: Project[] = [
     liveUrl: 'https://makekembavhutali.co.za/',
     codeUrl: 'https://github.com/makekemba-cloud',
   },
+  {
+  title: 'Mathinyani Plumbing Services',
+  image: '/assets/mathinyani-plumbing.png',
+  description: 'A professional, modern website for Mathinyani Plumbing Services & Maintenance – featuring lead generation, branded emails, and a premium design.',
+  liveUrl: 'https://mathinyaniplumbing.co.za/',
+},
 ]
 </script>
 
