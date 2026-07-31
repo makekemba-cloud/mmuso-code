@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, onMounted, watch, nextTick, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import PageLoader  from './components/PageLoader.vue'
 import Popup       from './components/Popup.vue'
@@ -17,9 +17,13 @@ import Contact     from './components/Contact.vue'
 import Footer      from './components/Footer.vue'
 import ScrollToTop from './components/ScrollToTop.vue'
 import WhatsApp    from './components/WhatsApp.vue'
+import { useTracker } from './composables/useTracker'   // ← import tracker
 
 const popupRef = ref<InstanceType<typeof Popup> | null>(null)
 const route = useRoute()
+
+// Hide public elements on admin routes
+const isAdminRoute = computed(() => route.path.startsWith('/admin'))
 
 function showPopup() {
   popupRef.value?.show()
@@ -41,7 +45,11 @@ function initScrollReveal() {
   document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
 }
 
-// Initial run if on home page
+// --- Initialize tracker ---
+// This will automatically track page views, clicks on data-track elements, and page duration.
+useTracker();
+
+// --- Lifecycle ---
 onMounted(() => {
   if (route.path === '/') {
     initScrollReveal()
@@ -62,7 +70,9 @@ watch(() => route.path, (newPath) => {
   <div class="bg-[#0a0a0a] text-gray-200 antialiased">
     <PageLoader />
     <Popup ref="popupRef" />
-    <Nav />
+
+    <!-- Public navigation – hidden on admin routes -->
+    <Nav v-if="!isAdminRoute" />
 
     <!-- Show homepage content ONLY when on root path -->
     <div v-if="route.path === '/'">
@@ -78,12 +88,15 @@ watch(() => route.path, (newPath) => {
       <div class="reveal"><Contact @show-popup="showPopup" /></div>
     </div>
 
-    <!-- Show legal pages and other routes here -->
+    <!-- Show legal pages, admin, and other routes here -->
     <router-view v-else @show-popup="showPopup" />
 
-    <Footer />
-    <ScrollToTop />
-    <WhatsApp />
+    <!-- Public footer – hidden on admin routes -->
+    <Footer v-if="!isAdminRoute" />
+
+    <!-- Floating elements – hidden on admin routes -->
+    <ScrollToTop v-if="!isAdminRoute" />
+    <WhatsApp v-if="!isAdminRoute" />
   </div>
 </template>
 

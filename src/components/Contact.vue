@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useTracker } from '../composables/useTracker'
 
 const emit = defineEmits<{ (e: 'showPopup'): void }>()
+
+const { trackEvent } = useTracker()
 
 const formRef = ref<HTMLFormElement | null>(null)
 const sending = ref(false)
@@ -17,11 +20,18 @@ async function handleSubmit() {
   if (!formRef.value) return
   sending.value = true
 
+  const payload = {
+    name: form.value.name,
+    email: form.value.email,
+    title: form.value.title,
+    message: form.value.message,
+  }
+
   try {
     const response = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form.value),
+      body: JSON.stringify(payload),
     })
 
     if (!response.ok) {
@@ -29,11 +39,35 @@ async function handleSubmit() {
       throw new Error(errorData.message || 'Failed to send email')
     }
 
+    // Log success
+    trackEvent({
+      event: 'form_submit',
+      category: 'contact',
+      metadata: {
+        name: payload.name,
+        email: payload.email,
+        title: payload.title,
+      },
+    })
+
     // Success – show popup and reset form
     emit('showPopup')
     form.value = { name: '', email: '', title: '', message: '' }
-  } catch (err) {
+  } catch (err: any) {
     console.error(err)
+
+    // Log failure
+    trackEvent({
+      event: 'form_submit_failed',
+      category: 'contact',
+      metadata: {
+        name: payload.name,
+        email: payload.email,
+        title: payload.title,
+        error: err.message || 'Unknown error',
+      },
+    })
+
     alert('Failed to send message. Please email info@mmusocode.co.za directly.')
   } finally {
     sending.value = false

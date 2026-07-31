@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useTracker } from '../composables/useTracker'
 
 const router = useRouter()
+const { trackEvent } = useTracker()
 
 interface ConfettiPiece {
   id: number; x: number; y: number; color: string
@@ -41,6 +43,16 @@ const devFacts = [
 
 const currentMessage = ref(devMessages[0])
 
+// ── Track page view ──────────────────────────────
+onMounted(() => {
+  trackEvent({
+    event: 'page_view',
+    category: '404',
+    url: window.location.href,
+    referrer: document.referrer || '',
+  })
+})
+
 // ── Notifications ──────────────────────────────────
 function addNotification(type: 'success' | 'warning' | 'info', message: string) {
   const id = Date.now()
@@ -78,6 +90,14 @@ function handleSearch() {
   if (isSearching.value) return
   isSearching.value = true
   addNotification('info', '🔍 Scanning all routes...')
+  
+  // Track search action
+  trackEvent({
+    event: 'click',
+    category: '404',
+    element: 'Scan Routes',
+  })
+
   searchText.value = ''
   const text = 'Scanning routes... checking components... querying database...'
   let i = 0
@@ -101,7 +121,43 @@ function handleSearch() {
 }
 
 function handleFunFact() {
-  addNotification('info', devFacts[Math.floor(Math.random() * devFacts.length)] as string)
+  const fact = devFacts[Math.floor(Math.random() * devFacts.length)]
+  addNotification('info', fact as string)
+  trackEvent({
+    event: 'click',
+    category: '404',
+    element: 'Dev Fact',
+    metadata: { fact },
+  })
+}
+
+function handleBackHome() {
+  trackEvent({
+    event: 'click',
+    category: '404',
+    element: 'Back to Home',
+  })
+  createConfetti()
+  router.push('/')
+}
+
+function handleGoBack() {
+  trackEvent({
+    event: 'click',
+    category: '404',
+    element: 'Go Back',
+  })
+  router.go(-1)
+}
+
+function handleMainCTA() {
+  trackEvent({
+    event: 'click',
+    category: '404',
+    element: 'Return to Home (CTA)',
+  })
+  createConfetti()
+  router.push('/')
 }
 
 // ── Intervals ──────────────────────────────────────
@@ -245,7 +301,7 @@ const parallaxReverse = () => ({ transform: `translate(${-mouseX.value * 20}px, 
 
       <!-- Action cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl w-full mb-12">
-        <button @click="createConfetti(); router.push('/')"
+        <button @click="handleBackHome"
           class="group rounded-xl border border-[#111827] bg-[#0B0F1A]/60 p-6 hover:border-[#2563EB]/50 transition-all duration-300 hover:scale-[1.02] active:scale-95 flex flex-col items-center gap-3">
           <div class="w-12 h-12 rounded-xl bg-[#2563EB]/10 border border-[#2563EB]/20 flex items-center justify-center group-hover:bg-[#2563EB]/20 transition-colors">
             <i class="fas fa-home text-[#3B82F6] text-xl"></i>
@@ -254,7 +310,7 @@ const parallaxReverse = () => ({ transform: `translate(${-mouseX.value * 20}px, 
           <span class="text-gray-500 text-xs flex items-center gap-1"><i class="fas fa-sparkles"></i> Safe return</span>
         </button>
 
-        <button @click="router.go(-1)"
+        <button @click="handleGoBack"
           class="group rounded-xl border border-[#111827] bg-[#0B0F1A]/60 p-6 hover:border-[#2563EB]/50 transition-all duration-300 hover:scale-[1.02] active:scale-95 flex flex-col items-center gap-3">
           <div class="w-12 h-12 rounded-xl bg-[#2563EB]/10 border border-[#2563EB]/20 flex items-center justify-center group-hover:bg-[#2563EB]/20 transition-colors">
             <i class="fas fa-arrow-left text-[#3B82F6] text-xl"></i>
@@ -285,7 +341,7 @@ const parallaxReverse = () => ({ transform: `translate(${-mouseX.value * 20}px, 
       <!-- Main CTA -->
       <div class="relative group">
         <div class="absolute -inset-3 bg-[#2563EB]/20 rounded-2xl blur-xl group-hover:bg-[#2563EB]/30 transition-all duration-500" />
-        <a href="/" @click="createConfetti"
+        <a href="/" @click.prevent="handleMainCTA"
           class="relative flex items-center gap-3 px-10 py-4 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-lg transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg shadow-[#2563EB]/30">
           <i class="fas fa-home group-hover:animate-bounce"></i>
           Return to Home

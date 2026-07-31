@@ -1,28 +1,27 @@
+import { Router } from 'express';
 import { Resend } from 'resend';
 
+const router = Router();
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-function escapeHtml(str) {
+// Helper: escape HTML special characters
+function escapeHtml(str: string): string {
   if (!str) return '';
   return str
-    .replace(/[&<>]/g, function(m) {
+    .replace(/[&<>]/g, (m) => {
       if (m === '&') return '&amp;';
       if (m === '<') return '&lt;';
       if (m === '>') return '&gt;';
       return m;
     })
-    .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-      return c;
-    });
+    .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, (c) => c);
 }
 
-// ----------------------------------------------------------------------
-// Shared Email Template (black & blue theme, no grey/light mode clash)
-// ----------------------------------------------------------------------
-function generateEmailTemplate(title, content, isAdmin = false) {
-  const brandBlue = '#2563EB';      // blue-600
-  const darkBg = '#0a0a0a';         // almost black (matches your site)
-  const cardBg = '#111111';         // slightly lighter black for contrast
+// Shared email template (black & blue theme)
+function generateEmailTemplate(title: string, content: string, isAdmin: boolean = false): string {
+  const brandBlue = '#2563EB';
+  const darkBg = '#0a0a0a';
+  const cardBg = '#111111';
   const textLight = '#f3f4f6';
   const textMuted = '#9ca3af';
 
@@ -108,19 +107,6 @@ function generateEmailTemplate(title, content, isAdmin = false) {
       color: ${brandBlue};
       text-decoration: none;
     }
-    .social-icons {
-      margin-top: 16px;
-    }
-    .social-icons a {
-      display: inline-block;
-      margin: 0 8px;
-      color: ${textMuted};
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .social-icons a:hover {
-      color: ${brandBlue};
-    }
     hr {
       border: none;
       border-top: 1px solid #1f2937;
@@ -132,9 +118,6 @@ function generateEmailTemplate(title, content, isAdmin = false) {
     }
     .contact-info div {
       margin: 6px 0;
-    }
-    .contact-info i {
-      margin-right: 8px;
     }
     @media (max-width: 600px) {
       .content {
@@ -170,10 +153,8 @@ function generateEmailTemplate(title, content, isAdmin = false) {
 </html>`;
 }
 
-// ----------------------------------------------------------------------
-// Admin Notification Content (full message details)
-// ----------------------------------------------------------------------
-function getAdminContent(name, email, title, message) {
+// Admin notification content
+function getAdminContent(name: string, email: string, title: string, message: string): string {
   const safeName = escapeHtml(name);
   const safeEmail = escapeHtml(email);
   const safeTitle = escapeHtml(title);
@@ -192,10 +173,8 @@ function getAdminContent(name, email, title, message) {
   `;
 }
 
-// ----------------------------------------------------------------------
-// Auto-reply Content (client confirmation)
-// ----------------------------------------------------------------------
-function getAutoReplyContent(name) {
+// Auto-reply to client
+function getAutoReplyContent(name: string): string {
   const safeName = escapeHtml(name);
   return `
     <p>Hi ${safeName},</p>
@@ -212,14 +191,8 @@ function getAutoReplyContent(name) {
   `;
 }
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
+// POST /api/contact
+router.post('/', async (req, res) => {
   const { name, email, title, message } = req.body;
 
   if (!name || !email || !title || !message) {
@@ -227,14 +200,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Admin notification
     const adminHtml = generateEmailTemplate(
       `New message: ${title}`,
       getAdminContent(name, email, title, message),
       true
     );
 
-    // Auto-reply to client
     const autoReplyHtml = generateEmailTemplate(
       'Thank you for contacting Mmuso Code',
       getAutoReplyContent(name),
@@ -264,7 +235,7 @@ export default async function handler(req, res) {
 
     if (autoReplyResult.status === 'rejected') {
       console.error('Auto-reply failed:', autoReplyResult.reason);
-      // Don't throw, but log
+      // Don't throw, but log the error – user still gets success because admin email was sent
     }
 
     res.status(200).json({ success: true });
@@ -272,4 +243,6 @@ export default async function handler(req, res) {
     console.error('Resend error:', err);
     res.status(500).json({ error: 'Failed to send email' });
   }
-}
+});
+
+export default router;

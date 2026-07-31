@@ -1,49 +1,45 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+
 interface Project {
-  title: string
-  image: string
-  description: string
-  inProduction?: boolean
-  underDevelopment?: boolean
-  liveUrl?: string
-  codeUrl?: string
+  _id?: string;
+  title: string;
+  image: string;          // mapped from imageUrl
+  description: string;
+  underDevelopment?: boolean;
+  liveUrl?: string;
+  codeUrl?: string;       // mapped from githubUrl
 }
 
-const projects: Project[] = [
-  {
-    title: 'Big Small Insights',
-    image: '/assets/Screenshot%202026-04-14%20165420.png',
-    description: 'A student support platform connecting learners with mentors, tutors, and structured resources.',
-    liveUrl: 'https://www.bigsmallinsights.co.za/',
-  },
-  {
-    title: 'Let Us Heal',
-    image: '/assets/let-us-heal.png',
-    description: 'A modern non-profit platform for youth empowerment and donations.',
-    underDevelopment: true,
-    liveUrl: 'https://letusheal.co.za/',
-  },
-  {
-    title: 'SNAC Member System',
-    image: '/assets/Screenshot%202026-03-06%20155837.png',
-    description: 'Complete athletic club management platform and member management.',
-    inProduction: false,
-    liveUrl: 'https://sibalekananiac.co.za',
-  },
-  {
-    title: 'Developer Portfolio',
-    image: '/assets/Screenshot%202026-03-06%20155706.png',
-    description: 'A modern portfolio showcasing development projects and skills.',
-    liveUrl: 'https://makekembavhutali.co.za/',
-    codeUrl: 'https://github.com/makekemba-cloud',
-  },
-  {
-  title: 'Mathinyani Plumbing Services',
-  image: '/assets/mathinyani-plumbing.png',
-  description: 'A professional, modern website for Mathinyani Plumbing Services & Maintenance – featuring lead generation, branded emails, and a premium design.',
-  liveUrl: 'https://mathinyaniplumbing.co.za/',
-},
-]
+const projects = ref<Project[]>([]);
+const loading = ref(true);
+const error = ref<string | null>(null);
+
+const fetchProjects = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    const res = await axios.get('/api/projects');
+    // Map backend fields to frontend expected names
+    projects.value = res.data.map((p: any) => ({
+      title: p.title,
+      image: p.imageUrl,
+      description: p.description,
+      inProduction: p.inProduction,
+      underDevelopment: p.underDevelopment,
+      liveUrl: p.liveUrl,
+      codeUrl: p.githubUrl,
+    }));
+  } catch (err) {
+    console.error('Failed to fetch projects:', err);
+    error.value = 'Failed to load projects. Please try again later.';
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(fetchProjects);
 </script>
 
 <template>
@@ -86,8 +82,18 @@ const projects: Project[] = [
         A selection of real-world systems built with modern frameworks and scalable architecture.
       </p>
 
+      <!-- Loading & Error States -->
+      <div v-if="loading" class="text-center py-12">
+        <div class="inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-gray-400 mt-4 text-sm">Loading projects...</p>
+      </div>
+
+      <div v-else-if="error" class="text-center py-12">
+        <p class="text-red-400">{{ error }}</p>
+      </div>
+
       <!-- Projects Grid – responsive columns and gaps -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
 
         <div
           v-for="project in projects"
@@ -107,9 +113,6 @@ const projects: Project[] = [
 
             <!-- Status Badges – responsive padding -->
             <div class="absolute top-3 left-3 flex gap-2">
-              <span v-if="project.inProduction" class="px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-md">
-                Live
-              </span>
               <span v-if="project.underDevelopment" class="px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium rounded-full bg-gradient-to-r from-yellow-500 to-amber-600 text-black shadow-md">
                 Development
               </span>
