@@ -1,40 +1,40 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-black relative">
-    <!-- Home Button -->
+  <div class="min-h-screen flex items-center justify-center bg-black px-4 sm:px-6 relative">
+    <!-- Home Button (larger touch target on mobile) -->
     <router-link
       to="/"
-      class="absolute top-4 left-4 text-gray-400 hover:text-white transition-colors flex items-center gap-2"
+      class="absolute top-4 left-4 z-10 text-gray-400 hover:text-white transition-colors flex items-center gap-2 p-2 -ml-2"
     >
-      <i class="fas fa-home"></i>
+      <i class="fas fa-home text-base sm:text-lg"></i>
       <span class="text-sm hidden sm:inline">Home</span>
     </router-link>
 
-    <div class="bg-gray-900 p-8 rounded-2xl w-96 border border-gray-800 shadow-2xl">
-      <div class="text-center mb-8">
-        <img src="/assets/mmuso-code-logoi.png" alt="Mmuso Code" class="h-12 mx-auto mb-4">
-        <h2 class="text-2xl font-bold text-white">Admin Login</h2>
-        <p class="text-gray-400 text-sm mt-1">Secure access only</p>
+    <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl w-full max-w-md border border-gray-800 shadow-2xl">
+      <div class="text-center mb-6 sm:mb-8">
+        <img src="/assets/mmuso-code-logoi.png" alt="Mmuso Code" class="h-10 sm:h-12 mx-auto mb-3 sm:mb-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-white">Admin Login</h2>
+        <p class="text-gray-400 text-xs sm:text-sm mt-1">Secure access only</p>
       </div>
 
       <form @submit.prevent="handleLogin">
         <div class="mb-4">
-          <label class="block text-gray-300 text-sm mb-2">Username</label>
+          <label class="block text-gray-300 text-xs sm:text-sm mb-1 sm:mb-2">Username</label>
           <input
             v-model="username"
             type="text"
-            class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="w-full px-3 sm:px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
             autocomplete="username"
           />
         </div>
 
         <div class="mb-6">
-          <label class="block text-gray-300 text-sm mb-2">Password</label>
+          <label class="block text-gray-300 text-xs sm:text-sm mb-1 sm:mb-2">Password</label>
           <div class="relative">
             <input
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
-              class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
+              class="w-full px-3 sm:px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
               required
               autocomplete="current-password"
             />
@@ -52,12 +52,12 @@
         <button
           type="submit"
           :disabled="loading"
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-all duration-200 disabled:opacity-50"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 sm:py-3 rounded-lg transition-all duration-200 disabled:opacity-50 text-sm sm:text-base"
         >
           {{ loading ? 'Logging in...' : 'Login' }}
         </button>
 
-        <p v-if="error" class="text-red-500 text-sm mt-4 text-center">{{ error }}</p>
+        <p v-if="error" class="text-red-500 text-xs sm:text-sm mt-4 text-center">{{ error }}</p>
       </form>
     </div>
   </div>
@@ -151,15 +151,12 @@ const handleLogin = async () => {
     const token = response.data.token
     const decoded = decodeJWT(token)
 
-    // Log success with the decoded role
     await logEvent('login_success', 'admin', 'Login Form', {
       username: decoded?.username || username.value,
       role: decoded?.role || 'unknown'
     })
 
-    // Store only the token – role and username will be decoded when needed
     localStorage.setItem('adminToken', token)
-    // No separate userRole/userName storage
 
     router.push('/admin/dashboard')
   } catch (err: any) {

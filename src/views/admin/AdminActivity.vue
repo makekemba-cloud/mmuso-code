@@ -1,20 +1,19 @@
 <template>
   <div>
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-      <h2 class="text-2xl font-bold text-white">API Activity Log</h2>
-      <button @click="fetchLogs" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-4 mb-4 md:mb-6">
+      <h2 class="text-xl md:text-2xl font-bold text-white">API Activity Log</h2>
+      <button @click="fetchLogs" class="bg-gray-700 hover:bg-gray-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-colors text-xs md:text-sm">
         <i class="fas fa-sync-alt"></i> Refresh
       </button>
     </div>
 
     <!-- Filters Bar -->
-    <div class="bg-gray-900/50 rounded-xl border border-gray-800 p-4 mb-6">
+    <div class="bg-gray-900/50 rounded-xl border border-gray-800 p-3 md:p-4 mb-4 md:mb-6">
       <!-- Row 1: Method, Status, Page Path, Time Preset -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-        <!-- Method -->
+      <div class="grid grid-cols-2 xs:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3 mb-3">
         <div>
-          <label class="block text-gray-400 text-xs uppercase mb-1">Method</label>
-          <select v-model="filters.method" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">Method</label>
+          <select v-model="filters.method" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm">
             <option value="">All</option>
             <option value="GET">GET</option>
             <option value="POST">POST</option>
@@ -24,10 +23,9 @@
           </select>
         </div>
 
-        <!-- Status Code -->
         <div>
-          <label class="block text-gray-400 text-xs uppercase mb-1">Status Code</label>
-          <select v-model="filters.statusCode" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">Status Code</label>
+          <select v-model="filters.statusCode" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm">
             <option value="">All</option>
             <option value="200">200 OK</option>
             <option value="201">201 Created</option>
@@ -40,16 +38,14 @@
           </select>
         </div>
 
-        <!-- Page Path -->
         <div>
-          <label class="block text-gray-400 text-xs uppercase mb-1">Page Path</label>
-          <input v-model="filters.pagePath" type="text" placeholder="/api/..." class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm placeholder-gray-500">
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">Page Path</label>
+          <input v-model="filters.pagePath" type="text" placeholder="/api/..." class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm placeholder-gray-500">
         </div>
 
-        <!-- Quick Time Presets -->
         <div>
-          <label class="block text-gray-400 text-xs uppercase mb-1">Time Range</label>
-          <select v-model="selectedPreset" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">Time Range</label>
+          <select v-model="selectedPreset" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm">
             <option value="10m">Last 10 min</option>
             <option value="30m">Last 30 min</option>
             <option value="1h">Last 1 hour</option>
@@ -61,19 +57,19 @@
         </div>
       </div>
 
-      <!-- Row 2: Manual datetime inputs -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <!-- Row 2: Manual datetime inputs + Clear -->
+      <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
         <div>
-          <label class="block text-gray-400 text-xs uppercase mb-1">From Date/Time</label>
-          <input v-model="filters.startDate" type="datetime-local" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">From Date/Time</label>
+          <input v-model="filters.startDate" type="datetime-local" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm">
         </div>
         <div>
-          <label class="block text-gray-400 text-xs uppercase mb-1">To Date/Time</label>
-          <input v-model="filters.endDate" type="datetime-local" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">To Date/Time</label>
+          <input v-model="filters.endDate" type="datetime-local" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm">
         </div>
         <div class="flex items-end gap-2">
-          <span v-if="isFiltered" class="text-gray-400 text-sm flex items-center">(Filtered)</span>
-          <button @click="clearFilters" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+          <span v-if="isFiltered" class="text-gray-400 text-xs md:text-sm flex items-center">(Filtered)</span>
+          <button @click="clearFilters" class="bg-gray-700 hover:bg-gray-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-colors text-xs md:text-sm">
             <i class="fas fa-times mr-1"></i> Clear
           </button>
         </div>
@@ -86,64 +82,64 @@
         <table class="w-full text-left">
           <thead class="bg-gray-800/50 border-b border-gray-800">
             <tr>
-              <th class="px-4 py-3 text-gray-300 text-xs uppercase">Time</th>
-              <th class="px-4 py-3 text-gray-300 text-xs uppercase">Method</th>
-              <th class="px-4 py-3 text-gray-300 text-xs uppercase">Page</th>
-              <th class="px-4 py-3 text-gray-300 text-xs uppercase">Status</th>
-              <th class="px-4 py-3 text-gray-300 text-xs uppercase">Time (ms)</th>
-              <th class="px-4 py-3 text-gray-300 text-xs uppercase">IP</th>
-              <th class="px-4 py-3 text-gray-300 text-xs uppercase">Browser</th>
-              <th class="px-4 py-3 text-gray-300 text-xs uppercase">Device</th>
-              <th class="px-4 py-3 text-gray-300 text-xs uppercase">Country</th>
-              <th class="px-4 py-3 text-gray-300 text-xs uppercase text-center">Details</th>
+              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Time</th>
+              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Method</th>
+              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Page</th>
+              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Status</th>
+              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden sm:table-cell">Time (ms)</th>
+              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden md:table-cell">IP</th>
+              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Browser</th>
+              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Device</th>
+              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Country</th>
+              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase text-center">Details</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="log in logs" :key="log._id" class="border-b border-gray-800/50 hover:bg-gray-800/30">
-              <td class="px-4 py-3 text-gray-300 text-sm">{{ formatDate(log.timestamp) }}</td>
-              <td class="px-4 py-3">
-                <span class="px-2 py-1 text-xs rounded-full" :class="getMethodClass(log.method)">
+              <td class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-xs md:text-sm whitespace-nowrap">{{ formatDate(log.timestamp) }}</td>
+              <td class="px-2 md:px-4 py-2 md:py-3">
+                <span class="px-1.5 md:px-2 py-0.5 md:py-1 text-[10px] md:text-xs rounded-full" :class="getMethodClass(log.method)">
                   {{ log.method }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-gray-400 text-sm max-w-xs truncate">{{ log.page }}</td>
-              <td class="px-4 py-3">
-                <span class="text-sm" :class="getStatusClass(log.statusCode)">
+              <td class="px-2 md:px-4 py-2 md:py-3 text-gray-400 text-xs md:text-sm max-w-[80px] md:max-w-xs truncate">{{ log.page }}</td>
+              <td class="px-2 md:px-4 py-2 md:py-3">
+                <span class="text-xs md:text-sm" :class="getStatusClass(log.statusCode)">
                   {{ log.statusCode || '—' }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-gray-400 text-sm">{{ log.responseTime || '—' }}</td>
-              <td class="px-4 py-3 text-gray-400 text-sm">{{ log.ip || '—' }}</td>
-              <td class="px-4 py-3 text-gray-400 text-sm">{{ log.browser || '—' }}</td>
-              <td class="px-4 py-3 text-gray-400 text-sm">{{ log.device || '—' }}</td>
-              <td class="px-4 py-3 text-gray-400 text-sm">{{ log.country || '—' }}</td>
-              <td class="px-4 py-3 text-center">
+              <td class="px-2 md:px-4 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden sm:table-cell">{{ log.responseTime || '—' }}</td>
+              <td class="px-2 md:px-4 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden md:table-cell">{{ log.ip || '—' }}</td>
+              <td class="px-2 md:px-4 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden lg:table-cell">{{ log.browser || '—' }}</td>
+              <td class="px-2 md:px-4 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden lg:table-cell">{{ log.device || '—' }}</td>
+              <td class="px-2 md:px-4 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden lg:table-cell">{{ log.country || '—' }}</td>
+              <td class="px-2 md:px-4 py-2 md:py-3 text-center">
                 <button @click="openDetail(log)" class="text-blue-400 hover:text-blue-300">
-                  <i class="fas fa-eye"></i>
+                  <i class="fas fa-eye text-xs md:text-sm"></i>
                 </button>
               </td>
             </tr>
             <tr v-if="logs.length === 0">
-              <td colspan="10" class="px-6 py-8 text-center text-gray-500">No logs found</td>
+              <td colspan="10" class="px-4 py-6 md:py-8 text-center text-gray-500 text-xs md:text-sm">No logs found</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-between items-center px-6 py-4 border-t border-gray-800">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-3 px-4 md:px-6 py-3 md:py-4 border-t border-gray-800">
         <button
           @click="prevPage"
           :disabled="page <= 1"
-          class="px-4 py-2 bg-gray-800 rounded disabled:opacity-50 text-gray-300 hover:bg-gray-700"
+          class="w-full sm:w-auto px-4 py-1.5 md:py-2 bg-gray-800 rounded disabled:opacity-50 text-gray-300 hover:bg-gray-700 text-xs md:text-sm"
         >
           Previous
         </button>
-        <span class="text-gray-400 text-sm">Page {{ page }} of {{ totalPages }}</span>
+        <span class="text-gray-400 text-xs md:text-sm">Page {{ page }} of {{ totalPages }}</span>
         <button
           @click="nextPage"
           :disabled="page >= totalPages"
-          class="px-4 py-2 bg-gray-800 rounded disabled:opacity-50 text-gray-300 hover:bg-gray-700"
+          class="w-full sm:w-auto px-4 py-1.5 md:py-2 bg-gray-800 rounded disabled:opacity-50 text-gray-300 hover:bg-gray-700 text-xs md:text-sm"
         >
           Next
         </button>
@@ -151,92 +147,92 @@
     </div>
 
     <!-- Detail Modal -->
-    <div v-if="selectedLog" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div class="bg-gray-900 rounded-xl max-w-3xl w-full p-6 border border-gray-800 max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-bold text-white">API Log Details</h3>
+    <div v-if="selectedLog" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-2 md:p-4">
+      <div class="bg-gray-900 rounded-xl max-w-3xl w-full p-4 md:p-6 border border-gray-800 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-3 md:mb-4">
+          <h3 class="text-lg md:text-xl font-bold text-white">API Log Details</h3>
           <button @click="closeDetail" class="text-gray-400 hover:text-white">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Timestamp</dt>
-            <dd class="text-white">{{ formatDate(selectedLog.timestamp) }}</dd>
-          </div>
-          <div>
-            <dt class="text-gray-500 text-xs uppercase">Method</dt>
-            <dd class="text-white font-mono">{{ selectedLog.method }}</dd>
-          </div>
-          <div class="col-span-2">
-            <dt class="text-gray-500 text-xs uppercase">Page</dt>
-            <dd class="text-white break-all">{{ selectedLog.page }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Timestamp</dt>
+            <dd class="text-white text-sm md:text-base">{{ formatDate(selectedLog.timestamp) }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Status Code</dt>
-            <dd class="text-white">{{ selectedLog.statusCode || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Method</dt>
+            <dd class="text-white font-mono text-sm md:text-base">{{ selectedLog.method }}</dd>
+          </div>
+          <div class="col-span-1 md:col-span-2">
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Page</dt>
+            <dd class="text-white break-all text-sm md:text-base">{{ selectedLog.page }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Response Time</dt>
-            <dd class="text-white">{{ selectedLog.responseTime ? selectedLog.responseTime + ' ms' : '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Status Code</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedLog.statusCode || '—' }}</dd>
           </div>
-          <div class="col-span-2">
-            <dt class="text-gray-500 text-xs uppercase">Query</dt>
-            <dd class="text-white font-mono text-sm break-all">{{ selectedLog.query || '—' }}</dd>
+          <div>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Response Time</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedLog.responseTime ? selectedLog.responseTime + ' ms' : '—' }}</dd>
           </div>
-          <div class="col-span-2">
-            <dt class="text-gray-500 text-xs uppercase">Body</dt>
-            <dd v-if="parsedBody" class="bg-gray-800 p-3 rounded text-sm">
+          <div class="col-span-1 md:col-span-2">
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Query</dt>
+            <dd class="text-white font-mono text-xs md:text-sm break-all">{{ selectedLog.query || '—' }}</dd>
+          </div>
+          <div class="col-span-1 md:col-span-2">
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Body</dt>
+            <dd v-if="parsedBody" class="bg-gray-800 p-2 md:p-3 rounded text-xs md:text-sm">
               <div v-for="(value, key) in parsedBody" :key="key" class="flex py-1 border-b border-gray-700/50 last:border-0">
                 <span class="text-gray-400 font-mono w-1/3">{{ key }}</span>
                 <span class="text-white font-mono w-2/3 break-all">{{ formatBodyValue(value) }}</span>
               </div>
             </dd>
-            <dd v-else class="text-gray-400 text-sm">—</dd>
+            <dd v-else class="text-gray-400 text-xs md:text-sm">—</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Referrer</dt>
-            <dd class="text-white break-all">{{ selectedLog.referrer || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Referrer</dt>
+            <dd class="text-white break-all text-sm md:text-base">{{ selectedLog.referrer || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">IP</dt>
-            <dd class="text-white">{{ selectedLog.ip || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">IP</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedLog.ip || '—' }}</dd>
+          </div>
+          <div class="col-span-1 md:col-span-2">
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">User Agent</dt>
+            <dd class="text-white break-all text-xs md:text-sm">{{ selectedLog.userAgent || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">User Agent</dt>
-            <dd class="text-white break-all text-sm">{{ selectedLog.userAgent || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Browser</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedLog.browser || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Browser</dt>
-            <dd class="text-white">{{ selectedLog.browser || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">OS</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedLog.os || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">OS</dt>
-            <dd class="text-white">{{ selectedLog.os || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Device</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedLog.device || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Device</dt>
-            <dd class="text-white">{{ selectedLog.device || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Country</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedLog.country || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Country</dt>
-            <dd class="text-white">{{ selectedLog.country || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Region</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedLog.region || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Region</dt>
-            <dd class="text-white">{{ selectedLog.region || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">City</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedLog.city || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">City</dt>
-            <dd class="text-white">{{ selectedLog.city || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">User ID</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedLog.userId || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">User ID</dt>
-            <dd class="text-white">{{ selectedLog.userId || '—' }}</dd>
-          </div>
-          <div>
-            <dt class="text-gray-500 text-xs uppercase">Session ID</dt>
-            <dd class="text-white font-mono text-sm">{{ selectedLog.sessionId || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Session ID</dt>
+            <dd class="text-white font-mono text-xs md:text-sm">{{ selectedLog.sessionId || '—' }}</dd>
           </div>
         </dl>
       </div>
@@ -271,7 +267,7 @@ interface ActivityLog {
   sessionId?: string;
 }
 
-// ── Simple debounce (no external lib) ──
+// ── Simple debounce ──
 function debounce(fn: Function, delay: number) {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
   return function (this: any, ...args: any[]) {

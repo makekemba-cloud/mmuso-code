@@ -1,97 +1,101 @@
 <template>
   <div>
-    <h2 class="text-2xl font-bold text-white mb-6">Dashboard Overview</h2>
+    <h2 class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Dashboard Overview</h2>
 
     <!-- Stats cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div class="bg-gray-900/50 rounded-xl p-5 border border-gray-800">
+    <div class="grid grid-cols-2 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+      <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-gray-400 text-xs uppercase">Total Visits</p>
-            <p class="text-2xl font-bold text-white">{{ stats.totalVisits || 0 }}</p>
+            <p class="text-gray-400 text-[10px] sm:text-xs uppercase">Total Visits</p>
+            <p class="text-xl sm:text-2xl font-bold text-white">{{ stats.totalVisits || 0 }}</p>
           </div>
-          <i class="fas fa-eye text-2xl text-blue-500 opacity-50"></i>
+          <i class="fas fa-eye text-xl sm:text-2xl text-blue-500 opacity-50"></i>
         </div>
       </div>
-      <div class="bg-gray-900/50 rounded-xl p-5 border border-gray-800">
+      <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-gray-400 text-xs uppercase">Unique Visitors</p>
-            <p class="text-2xl font-bold text-white">{{ stats.uniqueVisitors || 0 }}</p>
+            <p class="text-gray-400 text-[10px] sm:text-xs uppercase">Unique Visitors</p>
+            <p class="text-xl sm:text-2xl font-bold text-white">{{ stats.uniqueVisitors || 0 }}</p>
           </div>
-          <i class="fas fa-users text-2xl text-green-500 opacity-50"></i>
+          <i class="fas fa-users text-xl sm:text-2xl text-green-500 opacity-50"></i>
         </div>
       </div>
-      <div class="bg-gray-900/50 rounded-xl p-5 border border-gray-800">
+      <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-gray-400 text-xs uppercase">Total Projects</p>
-            <p class="text-2xl font-bold text-white">{{ stats.projectsCount || 0 }}</p>
+            <p class="text-gray-400 text-[10px] sm:text-xs uppercase">Total Projects</p>
+            <p class="text-xl sm:text-2xl font-bold text-white">{{ stats.projectsCount || 0 }}</p>
           </div>
-          <i class="fas fa-folder-open text-2xl text-purple-500 opacity-50"></i>
+          <i class="fas fa-folder-open text-xl sm:text-2xl text-purple-500 opacity-50"></i>
         </div>
       </div>
-      <div class="bg-gray-900/50 rounded-xl p-5 border border-gray-800">
+      <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-gray-400 text-xs uppercase">API Requests</p>
-            <p class="text-2xl font-bold text-white">{{ apiRequests || 0 }}</p>
+            <p class="text-gray-400 text-[10px] sm:text-xs uppercase">API Requests</p>
+            <p class="text-xl sm:text-2xl font-bold text-white">{{ apiRequests || 0 }}</p>
           </div>
-          <i class="fas fa-code text-2xl text-yellow-500 opacity-50"></i>
+          <i class="fas fa-code text-xl sm:text-2xl text-yellow-500 opacity-50"></i>
         </div>
       </div>
     </div>
 
     <!-- Additional stats row -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-      <div class="bg-gray-900/50 rounded-xl p-4 border border-gray-800">
-        <p class="text-gray-400 text-xs uppercase">Avg Response Time</p>
-        <p class="text-xl font-bold text-white">{{ avgResponseTime }} ms</p>
+    <div class="grid grid-cols-1 xs:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+      <div class="bg-gray-900/50 rounded-xl p-3 sm:p-4 border border-gray-800">
+        <p class="text-gray-400 text-[10px] sm:text-xs uppercase">Avg Response Time</p>
+        <p class="text-base sm:text-xl font-bold text-white">{{ avgResponseTime }} ms</p>
       </div>
-      <div class="bg-gray-900/50 rounded-xl p-4 border border-gray-800">
-        <p class="text-gray-400 text-xs uppercase">Most Used Method</p>
-        <p class="text-xl font-bold text-white">{{ topMethod || '—' }}</p>
+      <div class="bg-gray-900/50 rounded-xl p-3 sm:p-4 border border-gray-800">
+        <p class="text-gray-400 text-[10px] sm:text-xs uppercase">Most Used Method</p>
+        <p class="text-base sm:text-xl font-bold text-white">{{ topMethod || '—' }}</p>
       </div>
-      <div class="bg-gray-900/50 rounded-xl p-4 border border-gray-800">
-        <p class="text-gray-400 text-xs uppercase">Top Browser</p>
-        <p class="text-xl font-bold text-white">{{ topBrowser || '—' }}</p>
+      <div class="bg-gray-900/50 rounded-xl p-3 sm:p-4 border border-gray-800">
+        <p class="text-gray-400 text-[10px] sm:text-xs uppercase">Top Browser</p>
+        <p class="text-base sm:text-xl font-bold text-white">{{ topBrowser || '—' }}</p>
       </div>
     </div>
 
     <!-- Charts row -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
       <!-- Line chart: visits over last 7 days -->
-      <div class="bg-gray-900/50 rounded-xl p-5 border border-gray-800">
-        <h3 class="text-sm font-semibold text-white mb-3">Visits (Last 7 Days)</h3>
-        <canvas ref="lineChartCanvas"></canvas>
+      <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
+        <h3 class="text-xs sm:text-sm font-semibold text-white mb-2 sm:mb-3">Visits (Last 7 Days)</h3>
+        <div class="chart-container">
+          <canvas ref="lineChartCanvas"></canvas>
+        </div>
       </div>
       <!-- Pie chart: device distribution -->
-      <div class="bg-gray-900/50 rounded-xl p-5 border border-gray-800">
-        <h3 class="text-sm font-semibold text-white mb-3">Device Distribution</h3>
-        <canvas ref="pieChartCanvas"></canvas>
+      <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
+        <h3 class="text-xs sm:text-sm font-semibold text-white mb-2 sm:mb-3">Device Distribution</h3>
+        <div class="chart-container">
+          <canvas ref="pieChartCanvas"></canvas>
+        </div>
       </div>
     </div>
 
     <!-- Top pages table -->
-    <div class="bg-gray-900/50 rounded-xl p-5 border border-gray-800">
-      <h3 class="text-sm font-semibold text-white mb-4">Top API Endpoints</h3>
+    <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
+      <h3 class="text-xs sm:text-sm font-semibold text-white mb-3 sm:mb-4">Top API Endpoints</h3>
       <div class="overflow-x-auto">
         <table class="w-full text-left">
-          <thead class="text-gray-400 text-xs uppercase border-b border-gray-700">
+          <thead class="text-gray-400 text-[10px] sm:text-xs uppercase border-b border-gray-700">
             <tr>
-              <th class="pb-2 pr-4">Endpoint</th>
-              <th class="pb-2 pr-4">Method</th>
+              <th class="pb-2 pr-2 sm:pr-4">Endpoint</th>
+              <th class="pb-2 pr-2 sm:pr-4">Method</th>
               <th class="pb-2">Requests</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in topPages" :key="item.page" class="border-b border-gray-700/50 last:border-0">
-              <td class="py-2 pr-4 text-gray-300 text-sm font-mono">{{ item.page }}</td>
-              <td class="py-2 pr-4 text-gray-400 text-sm">{{ item.method }}</td>
-              <td class="py-2 text-gray-300 text-sm">{{ item.count }}</td>
+              <td class="py-1 sm:py-2 pr-2 sm:pr-4 text-gray-300 text-xs sm:text-sm font-mono truncate max-w-[100px] sm:max-w-none">{{ item.page }}</td>
+              <td class="py-1 sm:py-2 pr-2 sm:pr-4 text-gray-400 text-xs sm:text-sm">{{ item.method }}</td>
+              <td class="py-1 sm:py-2 text-gray-300 text-xs sm:text-sm">{{ item.count }}</td>
             </tr>
             <tr v-if="topPages.length === 0">
-              <td colspan="3" class="py-4 text-center text-gray-500">No data yet</td>
+              <td colspan="3" class="py-3 sm:py-4 text-center text-gray-500 text-xs sm:text-sm">No data yet</td>
             </tr>
           </tbody>
         </table>
@@ -101,7 +105,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted} from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import axios from 'axios'
 import { Chart, registerables } from 'chart.js'
 Chart.register(...registerables)
@@ -145,6 +149,8 @@ const fetchLogs = async () => {
     })
     logs.value = response.data.activities || []
     computeDerivedStats()
+    // Wait for DOM update before rendering charts
+    await nextTick()
     renderLineChart()
     renderPieChart()
   } catch (err) {
@@ -163,20 +169,16 @@ function computeDerivedStats() {
     return
   }
 
-  // Total requests
   apiRequests.value = items.length
 
-  // Average response time
   const times = items.map(l => l.responseTime).filter(t => t && t > 0)
   avgResponseTime.value = times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : 0
 
-  // Most common method
   const methodCounts: Record<string, number> = {}
   items.forEach(l => { methodCounts[l.method] = (methodCounts[l.method] || 0) + 1 })
   const topMethodEntry = Object.entries(methodCounts).sort((a, b) => b[1] - a[1])[0]
   topMethod.value = topMethodEntry ? topMethodEntry[0] : '—'
 
-  // Most common browser
   const browserCounts: Record<string, number> = {}
   items.forEach(l => {
     if (l.browser) {
@@ -186,7 +188,6 @@ function computeDerivedStats() {
   const topBrowserEntry = Object.entries(browserCounts).sort((a, b) => b[1] - a[1])[0]
   topBrowser.value = topBrowserEntry ? topBrowserEntry[0] : '—'
 
-  // Top pages (group by page + method)
   const pageMap: Record<string, { page: string; method: string; count: number }> = {}
   items.forEach(l => {
     const key = `${l.method} ${l.page}`
@@ -231,7 +232,7 @@ function renderLineChart() {
       plugins: { legend: { labels: { color: '#fff' } } },
       scales: {
         y: { ticks: { color: '#fff' }, grid: { color: '#1f2937' } },
-        x: { ticks: { color: '#fff' }, grid: { color: '#1f2937' } }
+        x: { ticks: { color: '#fff', maxTicksLimit: 7 }, grid: { color: '#1f2937' } }
       }
     }
   })
@@ -265,7 +266,7 @@ function renderPieChart() {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { labels: { color: '#fff' } }
+        legend: { labels: { color: '#fff', boxWidth: 12, font: { size: 11 } } }
       },
       cutout: '60%'
     }
@@ -279,8 +280,19 @@ onMounted(() => {
 </script>
 
 <style scoped>
-canvas { max-height: 200px; width: 100%; }
-@media (min-width: 768px) {
-  canvas { max-height: 250px; }
+.chart-container {
+  position: relative;
+  height: 160px;
+  width: 100%;
+}
+@media (min-width: 640px) {
+  .chart-container {
+    height: 200px;
+  }
+}
+@media (min-width: 1024px) {
+  .chart-container {
+    height: 220px;
+  }
 }
 </style>

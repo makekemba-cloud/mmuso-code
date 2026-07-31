@@ -1,19 +1,19 @@
 <template>
   <div>
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-      <h2 class="text-2xl font-bold text-white">User Events</h2>
-      <button @click="refresh" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-4 mb-4 md:mb-6">
+      <h2 class="text-xl md:text-2xl font-bold text-white">User Events</h2>
+      <button @click="refresh" class="bg-gray-700 hover:bg-gray-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-colors text-xs md:text-sm">
         <i class="fas fa-sync-alt"></i> Refresh
       </button>
     </div>
 
     <!-- Filters Bar -->
-    <div class="bg-gray-900/50 rounded-xl border border-gray-800 p-4 mb-6">
+    <div class="bg-gray-900/50 rounded-xl border border-gray-800 p-3 md:p-4 mb-4 md:mb-6">
       <!-- Row 1: Event, Category, Page Path, Time Preset -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+      <div class="grid grid-cols-2 xs:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3 mb-3">
         <div>
-          <label class="block text-gray-400 text-xs uppercase mb-1">Event Type</label>
-          <select v-model="filters.event" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">Event Type</label>
+          <select v-model="filters.event" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm">
             <option value="">All</option>
             <option value="page_view">Page View</option>
             <option value="click">Click</option>
@@ -27,8 +27,8 @@
         </div>
 
         <div>
-          <label class="block text-gray-400 text-xs uppercase mb-1">Category</label>
-          <select v-model="filters.category" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">Category</label>
+          <select v-model="filters.category" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm">
             <option value="">All</option>
             <option value="navigation">Navigation</option>
             <option value="cta">CTA</option>
@@ -40,13 +40,13 @@
         </div>
 
         <div>
-          <label class="block text-gray-400 text-xs uppercase mb-1">Page Path</label>
-          <input v-model="filters.pagePath" type="text" placeholder="/about, /pricing..." class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm placeholder-gray-500">
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">Page Path</label>
+          <input v-model="filters.pagePath" type="text" placeholder="/about, /pricing..." class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm placeholder-gray-500">
         </div>
 
         <div>
-          <label class="block text-gray-400 text-xs uppercase mb-1">Time Range</label>
-          <select v-model="selectedPreset" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">Time Range</label>
+          <select v-model="selectedPreset" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm">
             <option value="10m">Last 10 min</option>
             <option value="30m">Last 30 min</option>
             <option value="1h">Last 1 hour</option>
@@ -59,87 +59,87 @@
       </div>
 
       <!-- Row 2: Manual datetime + Apply / Clear -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3">
         <div>
-          <label class="block text-gray-400 text-xs uppercase mb-1">From Date/Time</label>
-          <input v-model="filters.startDate" type="datetime-local" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">From Date/Time</label>
+          <input v-model="filters.startDate" type="datetime-local" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm">
         </div>
         <div>
-          <label class="block text-gray-400 text-xs uppercase mb-1">To Date/Time</label>
-          <input v-model="filters.endDate" type="datetime-local" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">To Date/Time</label>
+          <input v-model="filters.endDate" type="datetime-local" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm">
         </div>
         <div class="flex items-end gap-2">
-          <button @click="applyFilters" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-sm">
-            <i class="fas fa-filter mr-1"></i> Apply Filters
+          <button @click="applyFilters" class="bg-blue-600 hover:bg-blue-700 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-colors text-xs md:text-sm">
+            <i class="fas fa-filter mr-1"></i> Apply
           </button>
-          <button @click="clearFilters" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+          <button @click="clearFilters" class="bg-gray-700 hover:bg-gray-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-colors text-xs md:text-sm">
             <i class="fas fa-times mr-1"></i> Clear
           </button>
-          <span v-if="isFiltered" class="text-gray-400 text-sm">(Filtered)</span>
+          <span v-if="isFiltered" class="text-gray-400 text-xs md:text-sm">(Filtered)</span>
         </div>
       </div>
     </div>
 
-    <!-- Events Table (unchanged) -->
+    <!-- Events Table -->
     <div class="bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-left">
           <thead class="bg-gray-800/50 border-b border-gray-800">
             <tr>
-              <th class="px-3 py-3 text-gray-300 text-xs uppercase">Time</th>
-              <th class="px-3 py-3 text-gray-300 text-xs uppercase">Event</th>
-              <th class="px-3 py-3 text-gray-300 text-xs uppercase">Category</th>
-              <th class="px-3 py-3 text-gray-300 text-xs uppercase">Element</th>
-              <th class="px-3 py-3 text-gray-300 text-xs uppercase">Page</th>
-              <th class="px-3 py-3 text-gray-300 text-xs uppercase">IP</th>
-              <th class="px-3 py-3 text-gray-300 text-xs uppercase">Browser</th>
-              <th class="px-3 py-3 text-gray-300 text-xs uppercase">Country</th>
-              <th class="px-3 py-3 text-gray-300 text-xs uppercase">Duration</th>
-              <th class="px-3 py-3 text-gray-300 text-xs uppercase text-center">Details</th>
+              <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Time</th>
+              <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Event</th>
+              <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Category</th>
+              <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden sm:table-cell">Element</th>
+              <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Page</th>
+              <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden md:table-cell">IP</th>
+              <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Browser</th>
+              <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Country</th>
+              <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden sm:table-cell">Duration</th>
+              <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase text-center">Details</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="evt in events" :key="evt._id" class="border-b border-gray-800/50 hover:bg-gray-800/30">
-              <td class="px-3 py-3 text-gray-300 text-sm">{{ formatTime(evt.timestamp) }}</td>
-              <td class="px-3 py-3">
-                <span class="px-2 py-1 text-xs rounded-full" :class="getEventClass(evt.event)">
+              <td class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-xs md:text-sm whitespace-nowrap">{{ formatTime(evt.timestamp) }}</td>
+              <td class="px-2 md:px-3 py-2 md:py-3">
+                <span class="px-1.5 md:px-2 py-0.5 md:py-1 text-[10px] md:text-xs rounded-full" :class="getEventClass(evt.event)">
                   {{ evt.event }}
                 </span>
               </td>
-              <td class="px-3 py-3 text-gray-400 text-sm">{{ evt.category }}</td>
-              <td class="px-3 py-3 text-gray-300 text-sm max-w-xs truncate">{{ evt.element || '—' }}</td>
-              <td class="px-3 py-3 text-gray-400 text-sm max-w-xs truncate">{{ evt.page || evt.url }}</td>
-              <td class="px-3 py-3 text-gray-400 text-sm">{{ evt.ip || '—' }}</td>
-              <td class="px-3 py-3 text-gray-400 text-sm">{{ evt.browser || '—' }}</td>
-              <td class="px-3 py-3 text-gray-400 text-sm">{{ evt.country || '—' }}</td>
-              <td class="px-3 py-3 text-gray-400 text-sm">{{ evt.duration ? evt.duration + 'ms' : '—' }}</td>
-              <td class="px-3 py-3 text-center">
+              <td class="px-2 md:px-3 py-2 md:py-3 text-gray-400 text-xs md:text-sm">{{ evt.category }}</td>
+              <td class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-xs md:text-sm max-w-xs truncate hidden sm:table-cell">{{ evt.element || '—' }}</td>
+              <td class="px-2 md:px-3 py-2 md:py-3 text-gray-400 text-xs md:text-sm max-w-[80px] md:max-w-xs truncate">{{ evt.page || evt.url }}</td>
+              <td class="px-2 md:px-3 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden md:table-cell">{{ evt.ip || '—' }}</td>
+              <td class="px-2 md:px-3 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden lg:table-cell">{{ evt.browser || '—' }}</td>
+              <td class="px-2 md:px-3 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden lg:table-cell">{{ evt.country || '—' }}</td>
+              <td class="px-2 md:px-3 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden sm:table-cell">{{ evt.duration ? evt.duration + 'ms' : '—' }}</td>
+              <td class="px-2 md:px-3 py-2 md:py-3 text-center">
                 <button @click="openDetail(evt)" class="text-blue-400 hover:text-blue-300">
-                  <i class="fas fa-eye"></i>
+                  <i class="fas fa-eye text-xs md:text-sm"></i>
                 </button>
               </td>
             </tr>
             <tr v-if="events.length === 0">
-              <td colspan="10" class="px-6 py-8 text-center text-gray-500">No events found</td>
+              <td colspan="10" class="px-4 py-6 md:py-8 text-center text-gray-500 text-xs md:text-sm">No events found</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-between items-center px-6 py-4 border-t border-gray-800">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-3 px-4 md:px-6 py-3 md:py-4 border-t border-gray-800">
         <button
           @click="prevPage"
           :disabled="page <= 1"
-          class="px-4 py-2 bg-gray-800 rounded disabled:opacity-50 text-gray-300 hover:bg-gray-700"
+          class="w-full sm:w-auto px-4 py-1.5 md:py-2 bg-gray-800 rounded disabled:opacity-50 text-gray-300 hover:bg-gray-700 text-xs md:text-sm"
         >
           Previous
         </button>
-        <span class="text-gray-400 text-sm">Page {{ page }} of {{ totalPages }}</span>
+        <span class="text-gray-400 text-xs md:text-sm">Page {{ page }} of {{ totalPages }}</span>
         <button
           @click="nextPage"
           :disabled="page >= totalPages"
-          class="px-4 py-2 bg-gray-800 rounded disabled:opacity-50 text-gray-300 hover:bg-gray-700"
+          class="w-full sm:w-auto px-4 py-1.5 md:py-2 bg-gray-800 rounded disabled:opacity-50 text-gray-300 hover:bg-gray-700 text-xs md:text-sm"
         >
           Next
         </button>
@@ -147,94 +147,94 @@
     </div>
 
     <!-- Detail Modal -->
-    <div v-if="selectedEvent" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div class="bg-gray-900 rounded-xl max-w-2xl w-full p-6 border border-gray-800 max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-bold text-white">Event Details</h3>
+    <div v-if="selectedEvent" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-2 md:p-4">
+      <div class="bg-gray-900 rounded-xl max-w-2xl w-full p-4 md:p-6 border border-gray-800 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-3 md:mb-4">
+          <h3 class="text-lg md:text-xl font-bold text-white">Event Details</h3>
           <button @click="closeDetail" class="text-gray-400 hover:text-white">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Event</dt>
-            <dd class="text-white font-mono">{{ selectedEvent.event }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Event</dt>
+            <dd class="text-white font-mono text-sm md:text-base">{{ selectedEvent.event }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Category</dt>
-            <dd class="text-white">{{ selectedEvent.category }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Category</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.category }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Element</dt>
-            <dd class="text-white">{{ selectedEvent.element || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Element</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.element || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">URL</dt>
-            <dd class="text-white break-all">{{ selectedEvent.url }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">URL</dt>
+            <dd class="text-white break-all text-sm md:text-base">{{ selectedEvent.url }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Page</dt>
-            <dd class="text-white">{{ selectedEvent.page || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Page</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.page || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Referrer</dt>
-            <dd class="text-white break-all">{{ selectedEvent.referrer || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Referrer</dt>
+            <dd class="text-white break-all text-sm md:text-base">{{ selectedEvent.referrer || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Traffic Source</dt>
-            <dd class="text-white">{{ selectedEvent.trafficSource || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Traffic Source</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.trafficSource || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Status</dt>
-            <dd class="text-white">{{ selectedEvent.status || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Status</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.status || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Duration</dt>
-            <dd class="text-white">{{ selectedEvent.duration ? selectedEvent.duration + 'ms' : '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Duration</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.duration ? selectedEvent.duration + 'ms' : '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">IP</dt>
-            <dd class="text-white">{{ selectedEvent.ip || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">IP</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.ip || '—' }}</dd>
+          </div>
+          <div class="col-span-1 md:col-span-2">
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">User Agent</dt>
+            <dd class="text-white break-all text-xs md:text-sm">{{ selectedEvent.userAgent || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">User Agent</dt>
-            <dd class="text-white break-all text-sm">{{ selectedEvent.userAgent || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Device</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.device || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Device</dt>
-            <dd class="text-white">{{ selectedEvent.device || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Browser</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.browser || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Browser</dt>
-            <dd class="text-white">{{ selectedEvent.browser || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">OS</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.os || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">OS</dt>
-            <dd class="text-white">{{ selectedEvent.os || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Country</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.country || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Country</dt>
-            <dd class="text-white">{{ selectedEvent.country || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Region</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.region || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Region</dt>
-            <dd class="text-white">{{ selectedEvent.region || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">City</dt>
+            <dd class="text-white text-sm md:text-base">{{ selectedEvent.city || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">City</dt>
-            <dd class="text-white">{{ selectedEvent.city || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Visitor ID</dt>
+            <dd class="text-white font-mono text-xs md:text-sm">{{ selectedEvent.visitorId || '—' }}</dd>
           </div>
           <div>
-            <dt class="text-gray-500 text-xs uppercase">Visitor ID</dt>
-            <dd class="text-white font-mono text-sm">{{ selectedEvent.visitorId || '—' }}</dd>
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Session ID</dt>
+            <dd class="text-white font-mono text-xs md:text-sm">{{ selectedEvent.sessionId || '—' }}</dd>
           </div>
-          <div>
-            <dt class="text-gray-500 text-xs uppercase">Session ID</dt>
-            <dd class="text-white font-mono text-sm">{{ selectedEvent.sessionId || '—' }}</dd>
-          </div>
-          <div class="col-span-2">
-            <dt class="text-gray-500 text-xs uppercase">Metadata</dt>
-            <dd class="text-white font-mono text-sm bg-gray-800 p-2 rounded overflow-x-auto">
+          <div class="col-span-1 md:col-span-2">
+            <dt class="text-gray-500 text-[10px] md:text-xs uppercase">Metadata</dt>
+            <dd class="text-white font-mono text-xs md:text-sm bg-gray-800 p-2 rounded overflow-x-auto">
               <pre>{{ JSON.stringify(selectedEvent.metadata, null, 2) || '—' }}</pre>
             </dd>
           </div>

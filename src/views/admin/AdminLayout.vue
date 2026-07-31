@@ -1,93 +1,140 @@
 <template>
   <div class="min-h-screen bg-black">
+    <!-- Mobile Hamburger Button -->
+    <button
+      v-if="!isMobileMenuOpen"
+      @click="toggleMobileMenu"
+      class="fixed top-4 left-4 z-50 md:hidden text-gray-400 hover:text-white transition-colors"
+      aria-label="Toggle menu"
+    >
+      <i class="fas fa-bars text-2xl"></i>
+    </button>
+
+    <!-- Mobile Overlay Backdrop -->
+    <div
+      v-if="isMobileMenuOpen"
+      @click="closeMobileMenu"
+      class="fixed inset-0 bg-black/70 z-40 md:hidden"
+    />
+
     <!-- Sidebar -->
     <aside
-      class="fixed left-0 top-0 z-40 h-screen transition-all duration-300 bg-gray-900/95 backdrop-blur border-r border-gray-800"
-      :class="sidebarCollapsed ? 'w-20' : 'w-64'"
+      class="fixed left-0 top-0 z-40 h-screen transition-all duration-300 bg-gray-900/95 backdrop-blur border-r border-gray-800
+             flex flex-col overflow-y-auto
+             w-64
+             transform
+             -translate-x-full
+             md:transform-none
+             md:translate-x-0"
+      :class="[
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full',
+        sidebarCollapsed ? 'md:w-20' : 'md:w-64'
+      ]"
     >
-      <div class="flex flex-col h-full">
-        <!-- Logo area -->
-        <div class="flex items-center justify-between p-4 border-b border-gray-800">
+      <!-- Header area: logo + (optional) collapse button on the right -->
+      <div class="border-b border-gray-800">
+        <div class="flex items-center justify-between p-4">
           <img
             src="/assets/mmuso-code-logoi.png"
             alt="Logo"
             class="h-8 transition-all duration-300"
-            :class="sidebarCollapsed ? 'mx-auto' : ''"
+            :class="sidebarCollapsed ? 'md:mx-auto' : ''"
           />
+          <!-- Collapse button when expanded (right of logo) -->
           <button
             v-if="!sidebarCollapsed"
             @click="toggleSidebar"
-            class="text-gray-400 hover:text-white"
+            class="hidden md:block text-gray-400 hover:text-white"
           >
             <i class="fas fa-chevron-left"></i>
           </button>
+          <!-- Mobile close button -->
           <button
-            v-else
+            @click="closeMobileMenu"
+            class="md:hidden text-gray-400 hover:text-white"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <!-- Collapse button when collapsed (below logo, centered) -->
+        <div v-if="sidebarCollapsed" class="hidden md:block pb-4 flex text-center justify-center">
+          <button
             @click="toggleSidebar"
-            class="text-gray-400 hover:text-white mx-auto"
+            class="text-gray-400 hover:text-white transition-colors"
           >
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
+      </div>
 
-        <!-- Navigation links -->
-        <nav class="flex-1 py-6">
-          <router-link
-            v-for="item in navItems"
-            :key="item.path"
-            :to="item.path"
-            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 transition-colors"
-            :class="{
-              'justify-center': sidebarCollapsed,
-              'bg-gray-800': $route.path.includes(item.path)
-            }"
-          >
-            <i :class="`fas ${item.icon} w-5 text-lg`"></i>
-            <span v-if="!sidebarCollapsed" class="ml-3">{{ item.label }}</span>
-          </router-link>
-        </nav>
+      <!-- Navigation links -->
+      <nav class="flex-1 py-6">
+        <router-link
+          v-for="item in navItems"
+          :key="item.path"
+          :to="item.path"
+          @click="closeMobileMenu"
+          class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 transition-colors"
+          :class="{
+            'justify-center': sidebarCollapsed,
+            'bg-gray-800': $route.path.includes(item.path)
+          }"
+        >
+          <i :class="`fas ${item.icon} w-5 text-lg`"></i>
+          <span class="ml-3" :class="{ 'md:hidden': sidebarCollapsed }">
+            {{ item.label }}
+          </span>
+        </router-link>
+      </nav>
 
-        <!-- Logout button -->
-        <div class="p-4 border-t border-gray-800">
-          <button
-            @click="openLogoutModal"
-            class="flex items-center w-full text-gray-400 hover:text-red-500 transition-colors"
-            :class="{ 'justify-center': sidebarCollapsed }"
-          >
-            <i class="fas fa-sign-out-alt w-5"></i>
-            <span v-if="!sidebarCollapsed" class="ml-3">Logout</span>
-          </button>
-        </div>
+      <!-- Logout button -->
+      <div class="p-4 border-t border-gray-800">
+        <button
+          @click="openLogoutModal"
+          class="flex items-center w-full text-gray-400 hover:text-red-500 transition-colors"
+          :class="{ 'justify-center': sidebarCollapsed }"
+        >
+          <i class="fas fa-sign-out-alt w-5"></i>
+          <span class="ml-3" :class="{ 'md:hidden': sidebarCollapsed }">
+            Logout
+          </span>
+        </button>
       </div>
     </aside>
 
     <!-- Main content area -->
     <div
       class="transition-all duration-300 flex flex-col min-h-screen"
-      :class="sidebarCollapsed ? 'ml-20' : 'ml-64'"
+      :class="{
+        'md:ml-64': !sidebarCollapsed,
+        'md:ml-20': sidebarCollapsed
+      }"
     >
       <!-- Top navigation bar -->
       <header class="sticky top-0 z-30 bg-black/80 backdrop-blur border-b border-gray-800">
-        <div class="flex items-center justify-between px-6 py-4">
-          <h1 class="text-xl font-semibold text-white">{{ pageTitle }}</h1>
-          <div class="flex items-center gap-4">
-            <span class="text-gray-400 text-sm">
+        <div class="flex items-center justify-between px-4 py-3 md:px-6 md:py-4">
+          <h1 class="text-lg md:text-xl font-semibold text-white truncate pl-10 md:pl-0">
+            {{ pageTitle }}
+          </h1>
+          <div class="flex items-center gap-3 md:gap-4">
+            <span class="text-gray-400 text-xs md:text-sm hidden sm:inline">
               Welcome, <span class="text-white font-medium">{{ userName }}</span>
             </span>
-            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
-              <i class="fas fa-user text-white text-sm"></i>
+            <span class="text-gray-400 text-xs sm:hidden">{{ userName }}</span>
+            <div class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-600 flex items-center justify-center">
+              <i class="fas fa-user text-white text-xs md:text-sm"></i>
             </div>
           </div>
         </div>
       </header>
 
       <!-- Page content -->
-      <main class="flex-1 p-6">
+      <main class="flex-1 p-4 md:p-6">
         <router-view />
       </main>
 
       <!-- Footer -->
-      <footer class="border-t border-gray-800 bg-black/40 px-6 py-3 text-gray-500 text-xs text-center">
+      <footer class="border-t border-gray-800 bg-black/40 px-4 py-2 md:px-6 md:py-3 text-gray-500 text-[10px] md:text-xs text-center">
         Mmuso Code Admin Panel v1.0 &bull; &copy; {{ new Date().getFullYear() }} All rights reserved
       </footer>
     </div>
@@ -135,6 +182,7 @@ const router = useRouter()
 const route = useRoute()
 const sidebarCollapsed = ref(false)
 const showLogoutModal = ref(false)
+const isMobileMenuOpen = ref(false)
 
 // --- JWT decoder ---
 function decodeJWT(token: string): any {
@@ -181,9 +229,17 @@ const pageTitle = computed(() => {
   return item ? item.label : 'Dashboard'
 })
 
-// --- Sidebar toggle ---
+// --- Sidebar toggle (desktop) ---
 const toggleSidebar = () => {
   sidebarCollapsed.value = !sidebarCollapsed.value
+}
+
+// --- Mobile menu toggle ---
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value
+}
+const closeMobileMenu = () => {
+  isMobileMenuOpen.value = false
 }
 
 // --- Logout modal ---
@@ -236,3 +292,10 @@ const confirmLogout = async () => {
   router.push('/admin/login')
 }
 </script>
+
+<style scoped>
+aside {
+  max-height: 100vh;
+  overflow-y: auto;
+}
+</style>

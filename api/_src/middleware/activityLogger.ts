@@ -3,12 +3,23 @@ import ActivityLog from '../models/ActivityLog';
 import { parse } from 'useragent';
 import crypto from 'crypto';
 
+// ── Helper: get real client IP (handles proxies) ──
+function getClientIp(req: Request): string {
+  const forwarded = req.headers['x-forwarded-for'] as string;
+  if (forwarded) {
+    // take the first IP in the list (client IP)
+    return forwarded.split(',').shift()?.trim() || '';
+  }
+  return req.ip || req.socket.remoteAddress || '';
+}
+
+// ── Session ID (could be improved with cookie-parser) ──
 function getSessionId(req: Request): string {
-  // If you use cookie-parser, you could read from req.cookies
-  // For now, generate per request (or you can store in a cookie)
+  // For now, generate per request; you can store in a cookie
   return crypto.randomUUID();
 }
 
+// ── Sanitise request body ──
 function sanitiseBody(body: any): string {
   if (!body) return '';
   const safe = { ...body };
@@ -18,7 +29,13 @@ function sanitiseBody(body: any): string {
   return JSON.stringify(safe).slice(0, 2000);
 }
 
+// ── IP‑based geolocation (skip private/local IPs) ──
 async function getGeo(ip: string): Promise<{ country?: string; region?: string; city?: string }> {
+  // Skip geolocation for localhost or private IP ranges
+  if (!ip || ip === '::1' || ip === '127.0.0.1' || 
+      ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.16.')) {
+    return {};
+  }
   try {
     const res = await fetch(`http://ip-api.com/json/${ip}?fields=country,region,city`);
     const data = await res.json();
@@ -28,6 +45,7 @@ async function getGeo(ip: string): Promise<{ country?: string; region?: string; 
   }
 }
 
+// ── Middleware ──
 export const logActivity = async (req: Request, res: Response, next: NextFunction) => {
   // Skip admin routes (or remove to log them too)
   if (req.path.startsWith('/api/admin')) return next();
@@ -36,12 +54,11 @@ export const logActivity = async (req: Request, res: Response, next: NextFunctio
   let statusCode: number | undefined;
   let responseTime: number | undefined;
 
-  // Override res.send – capture status and timing, then call original
+  // Override res.send to capture status and timing
   const originalSend = res.send;
   res.send = function (body) {
     statusCode = res.statusCode;
     responseTime = Date.now() - start;
-    // Must return the result of originalSend
     return originalSend.call(this, body);
   };
 
@@ -49,7 +66,7 @@ export const logActivity = async (req: Request, res: Response, next: NextFunctio
   res.on('finish', async () => {
     try {
       const ua = parse(req.headers['user-agent'] || '');
-      const ip = req.ip || req.socket.remoteAddress || '';
+      const ip = getClientIp(req);  // ← use real IP
       const sessionId = getSessionId(req);
       const userId = (req as any).user?.id;
 

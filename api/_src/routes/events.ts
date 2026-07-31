@@ -5,7 +5,17 @@ import { authMiddleware, requireRole } from '../middleware/auth';
 
 const router = express.Router();
 
-// Helper: derive traffic source from referrer
+// ── Helper: get real client IP (handles proxies) ──
+function getClientIp(req: express.Request): string {
+  const forwarded = req.headers['x-forwarded-for'] as string;
+  if (forwarded) {
+    // take the first IP in the list (client IP)
+    return forwarded.split(',').shift()?.trim() || '';
+  }
+  return req.ip || req.socket.remoteAddress || '';
+}
+
+// ── Helper: derive traffic source from referrer ──
 function deriveTrafficSource(referrer?: string): string {
   if (!referrer) return 'Direct';
   try {
@@ -25,9 +35,13 @@ function deriveTrafficSource(referrer?: string): string {
   }
 }
 
-// Helper: IP‑based geolocation (skip for localhost)
+// ── Helper: IP‑based geolocation (skip for private/local IPs) ──
 async function getGeoFromIP(ip: string): Promise<{ country?: string; region?: string; city?: string }> {
-  if (!ip || ip === '::1' || ip === '127.0.0.1') return {};
+  // Skip geolocation for localhost or private IP ranges
+  if (!ip || ip === '::1' || ip === '127.0.0.1' || 
+      ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.16.')) {
+    return {};
+  }
   try {
     const res = await fetch(`http://ip-api.com/json/${ip}?fields=country,region,city`);
     const data = await res.json();
@@ -37,7 +51,7 @@ async function getGeoFromIP(ip: string): Promise<{ country?: string; region?: st
   }
 }
 
-// POST /api/events – receive a frontend tracking event
+// ── POST /api/events – receive a frontend tracking event ──
 router.post('/', async (req, res) => {
   try {
     const {
@@ -63,8 +77,8 @@ router.post('/', async (req, res) => {
       status,
     } = req.body;
 
-    // Capture IP and User-Agent from the request
-    const ip = req.ip || req.socket.remoteAddress || '';
+    // Capture real IP and User-Agent
+    const ip = getClientIp(req);
     const userAgent = req.headers['user-agent'] || '';
 
     // Extract page (path) from the URL
@@ -111,8 +125,8 @@ router.post('/', async (req, res) => {
       postalCode,
       latitude,
       longitude,
-      ip,               // <-- now stored
-      userAgent,        // <-- now stored
+      ip,
+      userAgent,
       metadata,
       duration,
       status,
@@ -126,8 +140,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET /api/events – admin only, paginated
-// GET /api/events – admin only, paginated, with filters
+// ── GET /api/events – admin only, paginated, with filters ──
 router.get('/', authMiddleware, requireRole(['admin']), async (req, res) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
@@ -136,25 +149,18 @@ router.get('/', authMiddleware, requireRole(['admin']), async (req, res) => {
 
     const filter: any = {};
 
-    // Event type filter
     if (req.query.event) {
       filter.event = req.query.event;
     }
-
-    // Category filter
     if (req.query.category) {
       filter.category = req.query.category;
     }
-
-    // Page/URL partial match
     if (req.query.pagePath) {
       filter.$or = [
         { page: { $regex: req.query.pagePath, $options: 'i' } },
         { url: { $regex: req.query.pagePath, $options: 'i' } }
       ];
     }
-
-    // Date range
     if (req.query.startDate) {
       const start = new Date(req.query.startDate as string);
       if (!isNaN(start.getTime())) {
@@ -189,4 +195,5 @@ router.get('/', authMiddleware, requireRole(['admin']), async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch events' });
   }
 });
+
 export default router;
