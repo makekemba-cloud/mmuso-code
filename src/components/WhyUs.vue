@@ -30,9 +30,10 @@ const advantages: Advantage[] = [
 
 const industries = [
   { icon: 'fa-lightbulb',    label: 'Startups' },
-  { icon: 'fa-store',        label: 'Small Businesses' },
+  { icon: 'fa-store',        label: 'Businesses' },
   { icon: 'fa-running',      label: 'Sports Clubs' },
   { icon: 'fa-graduation-cap', label: 'Educational Platforms' },
+  { icon: 'fa-heart',        label: 'NPO' }, // ← added NPO
 ]
 </script>
 
@@ -110,7 +111,9 @@ const industries = [
           <div class="w-px h-4 sm:h-6 bg-gray-700 hidden sm:block"></div>
           <a href="https://letusheal.co.za/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-sm sm:text-lg hover:text-[#2563EB] transition">Let Us Heal</a>
           <div class="w-px h-4 sm:h-6 bg-gray-700 hidden sm:block"></div>
-          <div class="text-gray-400 font-semibold text-sm sm:text-lg cursor-default">Sizofakulwazi Foundation</div>
+          <a href="https://www.sizofakulwazifoundation.org.za/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-sm sm:text-lg hover:text-[#2563EB] transition">Sizofakulwazi Foundation</a>
+          <div class="w-px h-4 sm:h-6 bg-gray-700 hidden sm:block"></div>
+          <a href="https://khubasitsolutions.co.za/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-sm sm:text-lg hover:text-[#2563EB] transition">Khubas IT Solutions</a>
           <div class="w-px h-4 sm:h-6 bg-gray-700 hidden sm:block"></div>
           <div class="text-gray-400 font-semibold text-sm sm:text-lg cursor-default">Startups Across South Africa</div>
         </div>
