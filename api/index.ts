@@ -1,14 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
-import connectDB from './src/config/db';
-import { logActivity } from './src/middleware/activityLogger';
-import adminAuthRoutes from './src/routes/auth';   // make sure the file exists as auth.ts
-import projectRoutes from './src/routes/projects';
-import statsRoutes from './src/routes/stats';
-import contactRoutes from './src/routes/contact';
-import userRoutes from './src/routes/users';
-import eventRoutes from './src/routes/events';
+import connectDB from './_src/config/db';
+import { logActivity } from './_src/middleware/activityLogger';
+import adminAuthRoutes from './_src/routes/auth';   // make sure the file exists as auth.ts
+import projectRoutes from './_src/routes/projects';
+import statsRoutes from './_src/routes/stats';
+import contactRoutes from './_src/routes/contact';
+import userRoutes from './_src/routes/users';
+import eventRoutes from './_src/routes/events';
 
 // Connect to MongoDB
 connectDB();
