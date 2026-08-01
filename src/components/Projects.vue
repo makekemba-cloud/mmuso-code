@@ -93,7 +93,7 @@ onMounted(fetchProjects);
       </div>
 
       <!-- Projects Grid – responsive columns and gaps -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
+      <div v-else class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
 
         <div
           v-for="project in projects"
