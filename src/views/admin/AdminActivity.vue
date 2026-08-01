@@ -1,7 +1,10 @@
 <template>
   <div>
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-4 mb-4 md:mb-6">
-      <h2 class="text-xl md:text-2xl font-bold text-white">API Activity Log</h2>
+    <!-- Header: Title + Count + Refresh -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
+      <div class="flex items-center gap-3">
+        <h2 class="text-xl md:text-2xl font-bold text-white">API Activity Log</h2>
+      </div>
       <button @click="fetchLogs" class="bg-gray-700 hover:bg-gray-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-colors text-xs md:text-sm">
         <i class="fas fa-sync-alt"></i> Refresh
       </button>
@@ -57,8 +60,8 @@
         </div>
       </div>
 
-      <!-- Row 2: Manual datetime inputs + Clear -->
-      <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
+      <!-- Row 2: From Date, To Date, IP Filter, Actions -->
+      <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3 mb-3">
         <div>
           <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">From Date/Time</label>
           <input v-model="filters.startDate" type="datetime-local" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm">
@@ -67,16 +70,46 @@
           <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">To Date/Time</label>
           <input v-model="filters.endDate" type="datetime-local" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm">
         </div>
+        <div>
+          <label class="block text-gray-400 text-[10px] md:text-xs uppercase mb-1">IP Address (exact match)</label>
+          <input v-model="filters.ip" type="text" placeholder="e.g. 192.168.1.1" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-white text-xs md:text-sm placeholder-gray-500" @keyup.enter="applyFilters">
+        </div>
         <div class="flex items-end gap-2">
-          <span v-if="isFiltered" class="text-gray-400 text-xs md:text-sm flex items-center">(Filtered)</span>
+          <button @click="applyFilters" class="bg-blue-600 hover:bg-blue-700 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-colors text-xs md:text-sm">
+            <i class="fas fa-filter mr-1"></i> Apply
+          </button>
           <button @click="clearFilters" class="bg-gray-700 hover:bg-gray-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-colors text-xs md:text-sm">
             <i class="fas fa-times mr-1"></i> Clear
           </button>
         </div>
       </div>
+
+      <!-- Row 3: Blocked IPs (toggle + add/remove) -->
+      <div class="flex flex-wrap items-center gap-2 md:gap-4 mt-2 border-t border-gray-800 pt-3">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="ipFilterToggle" v-model="ipFilterEnabled" class="form-checkbox bg-gray-800 border-gray-700 text-blue-600 rounded">
+          <label for="ipFilterToggle" class="text-gray-300 text-xs md:text-sm cursor-pointer">Hide blocked IPs</label>
+        </div>
+        <div class="flex items-center gap-1 flex-wrap">
+          <span class="text-gray-400 text-xs">Add IP:</span>
+          <input v-model="newIP" type="text" placeholder="e.g. 192.168.1.1" class="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-white text-xs w-32 md:w-40" @keyup.enter="addBlockedIP">
+          <button @click="addBlockedIP" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs">+</button>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-gray-400 text-xs">Blocked:</span>
+          <span v-for="ip in blockedIPs" :key="ip" class="bg-gray-800 text-gray-300 px-2 py-0.5 rounded text-xs flex items-center gap-1">
+            {{ ip }}
+            <button @click="removeBlockedIP(ip)" class="text-red-400 hover:text-red-300 text-xs">✕</button>
+          </span>
+          <span v-if="blockedIPs.length === 0" class="text-gray-500 text-xs">(none)</span>
+          <span class="text-xs text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full">
+          {{ displayedLogs.length }} / {{ total }}
+        </span>
+        </div>
+      </div>
     </div>
 
-    <!-- Logs Table -->
+    <!-- Logs Table (mobile‑friendly) -->
     <div class="bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-left">
@@ -87,7 +120,7 @@
               <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Page</th>
               <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Status</th>
               <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden sm:table-cell">Time (ms)</th>
-              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden md:table-cell">IP</th>
+              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">IP</th> <!-- always visible -->
               <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Browser</th>
               <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Device</th>
               <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Country</th>
@@ -95,7 +128,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="log in logs" :key="log._id" class="border-b border-gray-800/50 hover:bg-gray-800/30">
+            <tr v-for="log in displayedLogs" :key="log._id" class="border-b border-gray-800/50 hover:bg-gray-800/30">
               <td class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-xs md:text-sm whitespace-nowrap">{{ formatDate(log.timestamp) }}</td>
               <td class="px-2 md:px-4 py-2 md:py-3">
                 <span class="px-1.5 md:px-2 py-0.5 md:py-1 text-[10px] md:text-xs rounded-full" :class="getMethodClass(log.method)">
@@ -109,7 +142,7 @@
                 </span>
               </td>
               <td class="px-2 md:px-4 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden sm:table-cell">{{ log.responseTime || '—' }}</td>
-              <td class="px-2 md:px-4 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden md:table-cell">{{ log.ip || '—' }}</td>
+              <td class="px-2 md:px-4 py-2 md:py-3 text-gray-400 text-xs md:text-sm font-mono">{{ log.ip || '—' }}</td>
               <td class="px-2 md:px-4 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden lg:table-cell">{{ log.browser || '—' }}</td>
               <td class="px-2 md:px-4 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden lg:table-cell">{{ log.device || '—' }}</td>
               <td class="px-2 md:px-4 py-2 md:py-3 text-gray-400 text-xs md:text-sm hidden lg:table-cell">{{ log.country || '—' }}</td>
@@ -119,8 +152,10 @@
                 </button>
               </td>
             </tr>
-            <tr v-if="logs.length === 0">
-              <td colspan="10" class="px-4 py-6 md:py-8 text-center text-gray-500 text-xs md:text-sm">No logs found</td>
+            <tr v-if="displayedLogs.length === 0">
+              <td colspan="10" class="px-4 py-6 md:py-8 text-center text-gray-500 text-xs md:text-sm">
+                {{ logs.length === 0 ? 'No logs found' : 'All logs are filtered out' }}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -146,7 +181,7 @@
       </div>
     </div>
 
-    <!-- Detail Modal -->
+    <!-- Detail Modal (unchanged) -->
     <div v-if="selectedLog" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-2 md:p-4">
       <div class="bg-gray-900 rounded-xl max-w-3xl w-full p-4 md:p-6 border border-gray-800 max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-3 md:mb-4">
@@ -267,7 +302,7 @@ interface ActivityLog {
   sessionId?: string;
 }
 
-// ── Simple debounce ──
+// ── Debounce ──
 function debounce(fn: Function, delay: number) {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
   return function (this: any, ...args: any[]) {
@@ -290,22 +325,66 @@ const filters = ref({
   pagePath: '',
   startDate: '',
   endDate: '',
+  ip: '',
 });
 
 const selectedPreset = ref('10m');
 
-// ── Computed ──
-const isFiltered = computed(() => {
-  return !!filters.value.method || !!filters.value.statusCode || !!filters.value.pagePath || !!filters.value.startDate || !!filters.value.endDate;
-});
+// ── Blocked IPs ──
+const blockedIPs = ref<string[]>(['102.253.50.15', '105.245.241.114']);
+const ipFilterEnabled = ref(true);
+const newIP = ref('');
 
+// Save/load blocked IPs from localStorage
+const loadBlockedIPs = () => {
+  const stored = localStorage.getItem('blockedIPs');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        blockedIPs.value = parsed;
+      }
+    } catch {}
+  }
+};
+const saveBlockedIPs = () => {
+  localStorage.setItem('blockedIPs', JSON.stringify(blockedIPs.value));
+};
+
+const addBlockedIP = () => {
+  const ip = newIP.value.trim();
+  if (ip && !blockedIPs.value.includes(ip)) {
+    blockedIPs.value.push(ip);
+    saveBlockedIPs();
+    newIP.value = '';
+  }
+};
+
+const removeBlockedIP = (ip: string) => {
+  blockedIPs.value = blockedIPs.value.filter(i => i !== ip);
+  saveBlockedIPs();
+};
+
+// ── Computed ──
 const parsedBody = computed(() => {
   if (!selectedLog.value?.body) return null;
-  try {
-    return JSON.parse(selectedLog.value.body);
-  } catch {
-    return null;
+  try { return JSON.parse(selectedLog.value.body); } catch { return null; }
+});
+
+// Displayed logs with IP filter + block list
+const displayedLogs = computed(() => {
+  let result = logs.value;
+  if (filters.value.ip) {
+    const ip = filters.value.ip.trim();
+    result = result.filter(log => log.ip === ip);
   }
+  if (ipFilterEnabled.value && blockedIPs.value.length > 0) {
+    result = result.filter(log => {
+      if (!log.ip) return true;
+      return !blockedIPs.value.includes(log.ip);
+    });
+  }
+  return result;
 });
 
 // ── Helpers ──
@@ -321,7 +400,6 @@ function formatBodyValue(value: any): string {
   return String(value);
 }
 
-// ── Apply preset ──
 function applyPreset(preset: string) {
   if (!preset) {
     filters.value.startDate = '';
@@ -369,20 +447,26 @@ const fetchLogs = async () => {
   }
 };
 
+// ── Apply filters (manual) ──
+const applyFilters = () => {
+  page.value = 1;
+  fetchLogs();
+};
+
 // ── Debounced fetch for auto‑filter ──
 const debouncedFetch = debounce(() => {
   page.value = 1;
   fetchLogs();
 }, 400);
 
-// ── Watchers for auto‑filter ──
+// ── Watchers (auto‑filter) ──
 watch(() => filters.value.method, debouncedFetch);
 watch(() => filters.value.statusCode, debouncedFetch);
 watch(() => filters.value.pagePath, debouncedFetch);
 watch(() => filters.value.startDate, debouncedFetch);
 watch(() => filters.value.endDate, debouncedFetch);
+// IP filter is NOT watched – only applied via button (or Enter key)
 
-// ── Watch preset ──
 watch(selectedPreset, (newVal) => {
   applyPreset(newVal);
 });
@@ -395,6 +479,7 @@ const clearFilters = () => {
     pagePath: '',
     startDate: '',
     endDate: '',
+    ip: '',
   };
   selectedPreset.value = '10m';
   page.value = 1;
@@ -434,6 +519,7 @@ const closeDetail = () => { selectedLog.value = null; };
 
 // ── Initial load ──
 onMounted(() => {
+  loadBlockedIPs();
   applyPreset('10m');
   fetchLogs();
 });
