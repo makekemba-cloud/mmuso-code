@@ -1,31 +1,21 @@
 Mmuso Code – Full‑Stack Portfolio & Admin Platform
-A modern, full‑stack web application built with Vue 3, TypeScript, Tailwind CSS, Express.js, and MongoDB. It serves as the digital presence for Mmuso Code (a software development company) and includes a hidden admin panel for managing projects, viewing site activity logs, and tracking user events.
+A modern, full‑stack web application built with Vue 3, TypeScript, Tailwind CSS, Express.js, and MongoDB.
+It serves as the digital presence for Mmuso Code (a software development company) and includes a hidden admin panel for managing projects, viewing site activity logs, and tracking user events.
 
 ✨ Features
-Landing Page – Hero, About, Expertise, Process, Projects, Why Us, Contact sections.
-
-Contact Form – Sends emails via Resend (auto‑reply + admin notification).
-
-Hidden Admin Panel – Secure login with JWT and role‑based access.
-
-Admin Dashboard – Stats cards, visit charts, and recent activity.
-
-Project CRUD – Create, edit, delete projects with image, tech stack, and live/github URLs.
-
-Activity Log – View every API request with IP, method, page, status, and detailed metadata.
-
-User Events – Track page views, clicks, form submissions, login attempts, and more.
-
-IP Filtering – Hide specific IPs from logs (stored in localStorage) and filter by exact IP.
-
-Responsive Design – Mobile‑first UI with Tailwind CSS.
-
-Scroll Progress Bar – Visual indicator on the homepage.
-
-GSAP Animations – Smooth scroll and entrance animations.
-
-Vue Router – Client‑side routing with lazy loading.
-
+Area	Description
+Landing Page	Hero, About, Expertise, Process, Projects, Why Us, Contact sections
+Contact Form	Sends emails via Resend (auto‑reply + admin notification)
+Hidden Admin Panel	Secure login with JWT and role‑based access
+Admin Dashboard	Stats cards, visit charts, and recent activity
+Project CRUD	Create, edit, delete projects with image, tech stack, and live/github URLs
+Activity Log	View every API request with IP, method, page, status, and detailed metadata
+User Events	Track page views, clicks, form submissions, login attempts, and more
+IP Filtering	Hide specific IPs from logs (stored in localStorage) and filter by exact IP
+Responsive Design	Mobile‑first UI with Tailwind CSS
+Scroll Progress Bar	Visual indicator on the homepage
+GSAP Animations	Smooth scroll and entrance animations
+Vue Router	Client‑side routing with lazy loading
 🛠️ Tech Stack
 Frontend
 Vue 3 – Composition API, <script setup>
@@ -60,7 +50,7 @@ Resend – Email service
 CORS – Cross‑origin resource sharing
 
 Deployment
-Vercel – Frontend (static) and Backend (serverless functions)
+Vercel – Frontend (static) + Backend (serverless functions)
 
 📁 Project Structure
 text
@@ -146,7 +136,7 @@ Create .env files for both frontend and backend.
 
 Root .env (frontend – mostly not needed, but can add Vite variables):
 
-env
+text
 VITE_APP_TITLE=Mmuso Code
 api/.env (backend – required):
 
@@ -155,7 +145,8 @@ MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/mmusoco
 JWT_SECRET=your_super_secret_key_generate_with_crypto
 RESEND_API_KEY=re_xxxxx   # optional for contact form
 PORT=3000
-Generate JWT_SECRET with: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+Generate JWT_SECRET with:
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 
 4. Create the first admin user
 You can manually insert a user into the users collection via MongoDB Atlas (or Compass):
@@ -278,5 +269,4 @@ Email: info@mmusocode.co.za
 
 Phone: +27 79 118 9866
 
-Happy coding! 🚀
-
+<div align="center"> <sub>Built with ❤️ by <a href="https://github.com/makekemba-cloud">Makekemba Vhutali</a></sub> </div>
