@@ -9,7 +9,7 @@ const router = express.Router();
 router.use(authMiddleware);
 router.use(requireRole(['admin']));
 
-// Total visits, unique IPs, etc.
+// GET /api/admin/stats/dashboard
 router.get('/dashboard', async (req, res) => {
   const totalVisits = await ActivityLog.countDocuments();
   const uniqueIPs = await ActivityLog.distinct('ip');
@@ -22,8 +22,7 @@ router.get('/dashboard', async (req, res) => {
   });
 });
 
-// Paginated activity log
-// GET /api/admin/stats/activities
+// GET /api/admin/stats/activities – with filters + IP exclusion
 router.get('/activities', async (req, res) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
@@ -59,9 +58,30 @@ router.get('/activities', async (req, res) => {
     if (req.query.endDate) {
       const end = new Date(req.query.endDate as string);
       if (!isNaN(end.getTime())) {
-        // Set to end of day
         end.setHours(23, 59, 59, 999);
         filter.timestamp = { ...filter.timestamp, $lte: end };
+      }
+    }
+
+    // ── IP exact filter (if provided) ──
+    if (req.query.ip) {
+      filter.ip = req.query.ip;
+    }
+
+    // ── IP exclusion (block list) ──
+    if (req.query.excludeIPs) {
+      const excludeList = (req.query.excludeIPs as string).split(',').filter(Boolean);
+      if (excludeList.length > 0) {
+        if (filter.ip) {
+          // Both exact match AND exclusion: combine with $and
+          filter.$and = [
+            { ip: filter.ip },
+            { ip: { $nin: excludeList } }
+          ];
+          delete filter.ip; // remove the direct ip field to avoid conflicts
+        } else {
+          filter.ip = { $nin: excludeList };
+        }
       }
     }
 

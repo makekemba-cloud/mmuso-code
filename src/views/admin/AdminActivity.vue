@@ -4,6 +4,9 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
       <div class="flex items-center gap-3">
         <h2 class="text-xl md:text-2xl font-bold text-white">API Activity Log</h2>
+        <span class="text-xs text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full">
+          {{ logs.length }} / {{ total }}
+        </span>
       </div>
       <button @click="fetchLogs" class="bg-gray-700 hover:bg-gray-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-colors text-xs md:text-sm">
         <i class="fas fa-sync-alt"></i> Refresh
@@ -84,7 +87,7 @@
         </div>
       </div>
 
-      <!-- Row 3: Blocked IPs (toggle + add/remove) -->
+      <!-- Row 3: Blocked IPs (toggle + add/remove) + Count Badge -->
       <div class="flex flex-wrap items-center gap-2 md:gap-4 mt-2 border-t border-gray-800 pt-3">
         <div class="flex items-center gap-2">
           <input type="checkbox" id="ipFilterToggle" v-model="ipFilterEnabled" class="form-checkbox bg-gray-800 border-gray-700 text-blue-600 rounded">
@@ -102,14 +105,15 @@
             <button @click="removeBlockedIP(ip)" class="text-red-400 hover:text-red-300 text-xs">✕</button>
           </span>
           <span v-if="blockedIPs.length === 0" class="text-gray-500 text-xs">(none)</span>
+          <!-- Count badge: current page items / total filtered -->
           <span class="text-xs text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full">
-          {{ displayedLogs.length }} / {{ total }}
-        </span>
+            {{ logs.length }} / {{ total }}
+          </span>
         </div>
       </div>
     </div>
 
-    <!-- Logs Table (mobile‑friendly) -->
+    <!-- Logs Table -->
     <div class="bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-left">
@@ -120,7 +124,7 @@
               <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Page</th>
               <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Status</th>
               <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden sm:table-cell">Time (ms)</th>
-              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">IP</th> <!-- always visible -->
+              <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">IP</th>
               <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Browser</th>
               <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Device</th>
               <th class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Country</th>
@@ -128,7 +132,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="log in displayedLogs" :key="log._id" class="border-b border-gray-800/50 hover:bg-gray-800/30">
+            <tr v-for="log in logs" :key="log._id" class="border-b border-gray-800/50 hover:bg-gray-800/30">
               <td class="px-2 md:px-4 py-2 md:py-3 text-gray-300 text-xs md:text-sm whitespace-nowrap">{{ formatDate(log.timestamp) }}</td>
               <td class="px-2 md:px-4 py-2 md:py-3">
                 <span class="px-1.5 md:px-2 py-0.5 md:py-1 text-[10px] md:text-xs rounded-full" :class="getMethodClass(log.method)">
@@ -152,9 +156,9 @@
                 </button>
               </td>
             </tr>
-            <tr v-if="displayedLogs.length === 0">
+            <tr v-if="logs.length === 0">
               <td colspan="10" class="px-4 py-6 md:py-8 text-center text-gray-500 text-xs md:text-sm">
-                {{ logs.length === 0 ? 'No logs found' : 'All logs are filtered out' }}
+                {{ total === 0 ? 'No logs found' : 'No logs match the current filters' }}
               </td>
             </tr>
           </tbody>
@@ -335,7 +339,7 @@ const blockedIPs = ref<string[]>(['102.253.50.15', '105.245.241.114']);
 const ipFilterEnabled = ref(true);
 const newIP = ref('');
 
-// Save/load blocked IPs from localStorage
+// ── Load / Save blocked IPs ──
 const loadBlockedIPs = () => {
   const stored = localStorage.getItem('blockedIPs');
   if (stored) {
@@ -357,35 +361,15 @@ const addBlockedIP = () => {
     blockedIPs.value.push(ip);
     saveBlockedIPs();
     newIP.value = '';
+    debouncedFetch(); // re‑fetch with new exclude list
   }
 };
 
 const removeBlockedIP = (ip: string) => {
   blockedIPs.value = blockedIPs.value.filter(i => i !== ip);
   saveBlockedIPs();
+  debouncedFetch();
 };
-
-// ── Computed ──
-const parsedBody = computed(() => {
-  if (!selectedLog.value?.body) return null;
-  try { return JSON.parse(selectedLog.value.body); } catch { return null; }
-});
-
-// Displayed logs with IP filter + block list
-const displayedLogs = computed(() => {
-  let result = logs.value;
-  if (filters.value.ip) {
-    const ip = filters.value.ip.trim();
-    result = result.filter(log => log.ip === ip);
-  }
-  if (ipFilterEnabled.value && blockedIPs.value.length > 0) {
-    result = result.filter(log => {
-      if (!log.ip) return true;
-      return !blockedIPs.value.includes(log.ip);
-    });
-  }
-  return result;
-});
 
 // ── Helpers ──
 function formatDatetimeLocal(date: Date): string {
@@ -434,6 +418,12 @@ const fetchLogs = async () => {
     if (filters.value.pagePath) params.pagePath = filters.value.pagePath;
     if (filters.value.startDate) params.startDate = new Date(filters.value.startDate).toISOString();
     if (filters.value.endDate) params.endDate = new Date(filters.value.endDate).toISOString();
+    if (filters.value.ip) params.ip = filters.value.ip.trim();
+
+    // Send exclude IPs if enabled and we have any
+    if (ipFilterEnabled.value && blockedIPs.value.length > 0) {
+      params.excludeIPs = blockedIPs.value.join(',');
+    }
 
     const res = await axios.get('/api/admin/stats/activities', {
       params,
@@ -465,10 +455,16 @@ watch(() => filters.value.statusCode, debouncedFetch);
 watch(() => filters.value.pagePath, debouncedFetch);
 watch(() => filters.value.startDate, debouncedFetch);
 watch(() => filters.value.endDate, debouncedFetch);
-// IP filter is NOT watched – only applied via button (or Enter key)
+// IP filter is not auto‑applied; use Apply button or Enter key.
 
 watch(selectedPreset, (newVal) => {
   applyPreset(newVal);
+});
+
+// Watch for changes in IP filter toggle and blocked list → refetch
+watch([ipFilterEnabled, () => blockedIPs.value], () => {
+  page.value = 1;
+  fetchLogs();
 });
 
 // ── Clear filters ──
@@ -492,6 +488,10 @@ const nextPage = () => { if (page.value < totalPages.value) { page.value++; fetc
 
 // ── Formatting ──
 const formatDate = (date: string) => new Date(date).toLocaleString();
+const parsedBody = computed(() => {
+  if (!selectedLog.value?.body) return null;
+  try { return JSON.parse(selectedLog.value.body); } catch { return null; }
+});
 
 const getMethodClass = (method: string) => {
   const map: Record<string, string> = {

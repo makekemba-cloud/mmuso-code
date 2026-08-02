@@ -175,6 +175,28 @@ router.get('/', authMiddleware, requireRole(['admin']), async (req, res) => {
       }
     }
 
+    // ── IP exact filter ──
+    if (req.query.ip) {
+      filter.ip = req.query.ip;
+    }
+
+    // ── IP exclusion (block list) ──
+    if (req.query.excludeIPs) {
+      const excludeList = (req.query.excludeIPs as string).split(',').filter(Boolean);
+      if (excludeList.length > 0) {
+        if (filter.ip) {
+          // Both exact match AND exclusion: combine with $and
+          filter.$and = [
+            { ip: filter.ip },
+            { ip: { $nin: excludeList } }
+          ];
+          delete filter.ip; // remove direct ip field
+        } else {
+          filter.ip = { $nin: excludeList };
+        }
+      }
+    }
+
     const [events, total] = await Promise.all([
       UserEvent.find(filter)
         .sort({ timestamp: -1 })

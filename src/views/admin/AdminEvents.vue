@@ -1,8 +1,12 @@
 <template>
   <div>
+    <!-- Header: Title + Count + Refresh -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
       <div class="flex items-center gap-3">
         <h2 class="text-xl md:text-2xl font-bold text-white">User Events</h2>
+        <span class="text-xs text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full">
+          {{ events.length }} / {{ total }}
+        </span>
       </div>
       <button @click="refresh" class="bg-gray-700 hover:bg-gray-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-colors text-xs md:text-sm">
         <i class="fas fa-sync-alt"></i> Refresh
@@ -103,14 +107,15 @@
             <button @click="removeBlockedIP(ip)" class="text-red-400 hover:text-red-300 text-xs">✕</button>
           </span>
           <span v-if="blockedIPs.length === 0" class="text-gray-500 text-xs">(none)</span>
-           <span class="text-xs text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full">
-          {{ displayedEvents.length }} / {{ total }}
-        </span>
+          <!-- Count badge: current page items / total filtered -->
+          <span class="text-xs text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full">
+            {{ events.length }} / {{ total }}
+          </span>
         </div>
       </div>
     </div>
 
-    <!-- Events Table (mobile‑friendly) -->
+    <!-- Events Table -->
     <div class="bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-left">
@@ -121,7 +126,7 @@
               <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Category</th>
               <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden sm:table-cell">Element</th>
               <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">Page</th>
-              <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">IP</th> <!-- always visible -->
+              <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase">IP</th>
               <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Browser</th>
               <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden lg:table-cell">Country</th>
               <th class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-[10px] md:text-xs uppercase hidden sm:table-cell">Duration</th>
@@ -129,7 +134,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="evt in displayedEvents" :key="evt._id" class="border-b border-gray-800/50 hover:bg-gray-800/30">
+            <tr v-for="evt in events" :key="evt._id" class="border-b border-gray-800/50 hover:bg-gray-800/30">
               <td class="px-2 md:px-3 py-2 md:py-3 text-gray-300 text-xs md:text-sm whitespace-nowrap">{{ formatTime(evt.timestamp) }}</td>
               <td class="px-2 md:px-3 py-2 md:py-3">
                 <span class="px-1.5 md:px-2 py-0.5 md:py-1 text-[10px] md:text-xs rounded-full" :class="getEventClass(evt.event)">
@@ -149,9 +154,9 @@
                 </button>
               </td>
             </tr>
-            <tr v-if="displayedEvents.length === 0">
+            <tr v-if="events.length === 0">
               <td colspan="10" class="px-4 py-6 md:py-8 text-center text-gray-500 text-xs md:text-sm">
-                {{ events.length === 0 ? 'No events found' : 'All events are filtered out' }}
+                {{ total === 0 ? 'No events found' : 'No events match the current filters' }}
               </td>
             </tr>
           </tbody>
@@ -305,7 +310,7 @@ interface Event {
   metadata?: Record<string, any>;
 }
 
-// ── Debounce helper ──
+// ── Debounce ──
 function debounce(fn: Function, delay: number) {
   let timer: ReturnType<typeof setTimeout> | null = null;
   return function (this: any, ...args: any[]) {
@@ -328,7 +333,7 @@ const filters = ref({
   pagePath: '',
   startDate: '',
   endDate: '',
-  ip: '', // added IP filter
+  ip: '',
 });
 
 const selectedPreset = ref('10m');
@@ -338,7 +343,7 @@ const blockedIPs = ref<string[]>(['102.253.50.15', '105.245.241.114']);
 const ipFilterEnabled = ref(true);
 const newIP = ref('');
 
-// Save/load blocked IPs from localStorage
+// ── Load / Save blocked IPs ──
 const loadBlockedIPs = () => {
   const stored = localStorage.getItem('blockedIPs');
   if (stored) {
@@ -360,39 +365,20 @@ const addBlockedIP = () => {
     blockedIPs.value.push(ip);
     saveBlockedIPs();
     newIP.value = '';
+    debouncedFetch();
   }
 };
 
 const removeBlockedIP = (ip: string) => {
   blockedIPs.value = blockedIPs.value.filter(i => i !== ip);
   saveBlockedIPs();
+  debouncedFetch();
 };
 
-// ── Computed: isFiltered ──
+// ── Computed ──
 const isFiltered = computed(() => {
   return !!filters.value.event || !!filters.value.category || !!filters.value.pagePath ||
          !!filters.value.startDate || !!filters.value.endDate || !!filters.value.ip;
-});
-
-// ── Displayed events (applies IP filter + block list) ──
-const displayedEvents = computed(() => {
-  let result = events.value;
-
-  // 1. IP exact filter (if set)
-  if (filters.value.ip) {
-    const ip = filters.value.ip.trim();
-    result = result.filter(evt => evt.ip === ip);
-  }
-
-  // 2. Block list (if enabled)
-  if (ipFilterEnabled.value && blockedIPs.value.length > 0) {
-    result = result.filter(evt => {
-      if (!evt.ip) return true;
-      return !blockedIPs.value.includes(evt.ip);
-    });
-  }
-
-  return result;
 });
 
 // ── Helpers ──
@@ -418,7 +404,7 @@ function applyPreset(preset: string) {
   filters.value.endDate = formatDatetimeLocal(now);
 }
 
-// ── API fetch ──
+// ── API call ──
 const fetchEvents = async () => {
   try {
     const token = localStorage.getItem('adminToken');
@@ -431,6 +417,11 @@ const fetchEvents = async () => {
     if (filters.value.pagePath) params.pagePath = filters.value.pagePath;
     if (filters.value.startDate) params.startDate = new Date(filters.value.startDate).toISOString();
     if (filters.value.endDate) params.endDate = new Date(filters.value.endDate).toISOString();
+    if (filters.value.ip) params.ip = filters.value.ip.trim();
+
+    if (ipFilterEnabled.value && blockedIPs.value.length > 0) {
+      params.excludeIPs = blockedIPs.value.join(',');
+    }
 
     const res = await axios.get('/api/events', {
       params,
@@ -444,13 +435,12 @@ const fetchEvents = async () => {
   }
 };
 
-// ── Apply filters (manual) ──
+// ── Apply filters ──
 const applyFilters = () => {
   page.value = 1;
   fetchEvents();
 };
 
-// ── Clear filters ──
 const clearFilters = () => {
   filters.value = { event: '', category: '', pagePath: '', startDate: '', endDate: '', ip: '' };
   selectedPreset.value = '10m';
@@ -458,20 +448,26 @@ const clearFilters = () => {
   fetchEvents();
 };
 
-// ── Auto‑apply time preset and date changes (debounced) ──
-const debouncedFetch = debounce(() => { page.value = 1; fetchEvents(); }, 400);
+const debouncedFetch = debounce(() => {
+  page.value = 1;
+  fetchEvents();
+}, 400);
 
-watch(selectedPreset, (newVal) => {
-  applyPreset(newVal);
-});
-
-// Auto‑filter for event, category, pagePath, startDate, endDate
+// ── Watchers ──
 watch(() => filters.value.event, debouncedFetch);
 watch(() => filters.value.category, debouncedFetch);
 watch(() => filters.value.pagePath, debouncedFetch);
 watch(() => filters.value.startDate, debouncedFetch);
 watch(() => filters.value.endDate, debouncedFetch);
-// IP filter is NOT watched – applied via Apply button or Enter key
+
+watch(selectedPreset, (newVal) => {
+  applyPreset(newVal);
+});
+
+watch([ipFilterEnabled, () => blockedIPs.value], () => {
+  page.value = 1;
+  fetchEvents();
+});
 
 // ── Pagination ──
 const prevPage = () => { if (page.value > 1) { page.value--; fetchEvents(); } };
