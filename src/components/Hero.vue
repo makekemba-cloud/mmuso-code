@@ -75,10 +75,10 @@
           </a>
 
           <a
-            href="#stack"
+            href="/pricing"
             class="group border border-blue-400/30 text-blue-200 bg-black/30 backdrop-blur-md px-8 py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/60 hover:bg-blue-500/10 text-shadow"
           >
-            Our Technologies
+            Our pricing
             <i class="fas fa-chevron-right text-xs opacity-70 group-hover:opacity-100 transition-opacity"></i>
           </a>
         </div>

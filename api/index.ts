@@ -9,6 +9,8 @@ import statsRoutes from './_src/routes/stats';
 import contactRoutes from './_src/routes/contact';
 import userRoutes from './_src/routes/users';
 import eventRoutes from './_src/routes/events';
+import reviewRoutes from './_src/routes/reviews';
+import adminReviewRoutes from './_src/routes/adminReviews';
 
 // Connect to MongoDB
 connectDB();
@@ -32,6 +34,8 @@ app.use('/api/admin/stats', statsRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/admin/users', userRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/admin/reviews', adminReviewRoutes);
 
 // 404 handler (no path parameter)
 app.use((req, res) => {

@@ -2,7 +2,7 @@
   <div>
     <h2 class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Dashboard Overview</h2>
 
-    <!-- Stats cards -->
+    <!-- Stats cards (original 4) -->
     <div class="grid grid-cols-2 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
       <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
         <div class="flex items-center justify-between">
@@ -42,7 +42,32 @@
       </div>
     </div>
 
-    <!-- Additional stats row -->
+    <!-- Reviews Stats row (2 cards) – visible only -->
+    <div class="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+      <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-400 text-[10px] sm:text-xs uppercase">Total Reviews (Visible)</p>
+            <p class="text-xl sm:text-2xl font-bold text-white">{{ reviewStats.total || 0 }}</p>
+          </div>
+          <i class="fas fa-star text-xl sm:text-2xl text-yellow-400 opacity-50"></i>
+        </div>
+      </div>
+      <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-400 text-[10px] sm:text-xs uppercase">Avg Rating (Visible)</p>
+            <p class="text-xl sm:text-2xl font-bold text-white">
+              {{ reviewStats.average ? reviewStats.average.toFixed(1) : '—' }}
+              <span class="text-base text-gray-400">★</span>
+            </p>
+          </div>
+          <i class="fas fa-star-half-alt text-xl sm:text-2xl text-yellow-400 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional stats row (from logs) -->
     <div class="grid grid-cols-1 xs:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
       <div class="bg-gray-900/50 rounded-xl p-3 sm:p-4 border border-gray-800">
         <p class="text-gray-400 text-[10px] sm:text-xs uppercase">Avg Response Time</p>
@@ -60,14 +85,12 @@
 
     <!-- Charts row -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
-      <!-- Line chart: visits over last 7 days -->
       <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
         <h3 class="text-xs sm:text-sm font-semibold text-white mb-2 sm:mb-3">Visits (Last 7 Days)</h3>
         <div class="chart-container">
           <canvas ref="lineChartCanvas"></canvas>
         </div>
       </div>
-      <!-- Pie chart: device distribution -->
       <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
         <h3 class="text-xs sm:text-sm font-semibold text-white mb-2 sm:mb-3">Device Distribution</h3>
         <div class="chart-container">
@@ -116,12 +139,16 @@ const stats = ref({
   projectsCount: 0
 })
 
+const reviewStats = ref({
+  total: 0,
+  average: 0
+})
+
 const lineChartCanvas = ref<HTMLCanvasElement | null>(null)
 const pieChartCanvas = ref<HTMLCanvasElement | null>(null)
 let lineChartInstance: Chart | null = null
 let pieChartInstance: Chart | null = null
 
-// Derived stats from logs
 const logs = ref<any[]>([])
 const apiRequests = ref(0)
 const avgResponseTime = ref(0)
@@ -141,6 +168,19 @@ const fetchStats = async () => {
   }
 }
 
+// Fetch review stats – only visible (isHidden: false)
+const fetchReviewStats = async () => {
+  try {
+    const token = localStorage.getItem('adminToken')
+    const response = await axios.get('/api/admin/reviews/stats?visible=true', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    reviewStats.value = response.data
+  } catch (err) {
+    console.error('Failed to fetch review stats', err)
+  }
+}
+
 const fetchLogs = async () => {
   try {
     const token = localStorage.getItem('adminToken')
@@ -149,7 +189,6 @@ const fetchLogs = async () => {
     })
     logs.value = response.data.activities || []
     computeDerivedStats()
-    // Wait for DOM update before rendering charts
     await nextTick()
     renderLineChart()
     renderPieChart()
@@ -275,6 +314,7 @@ function renderPieChart() {
 
 onMounted(() => {
   fetchStats()
+  fetchReviewStats()
   fetchLogs()
 })
 </script>

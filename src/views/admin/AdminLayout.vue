@@ -217,8 +217,9 @@ const userRole = computed(() => userInfo.value?.role || 'viewer')
 
 // --- Navigation ---
 const navItems = [
-  { path: '/admin/dashboard', label: 'Dashboard', icon: 'fa-chart-line' },
-  { path: '/admin/projects', label: 'Projects', icon: 'fa-code-branch' },
+  { path: '/admin/dashboard', label: 'Dashboard', icon: 'fa-chart-line', roles: ['admin'] },
+  { path: '/admin/projects', label: 'Projects', icon: 'fa-code-branch', roles: ['admin'] },
+  { path: '/admin/reviews', label: 'Reviews', icon: 'fa-star', roles: ['admin'] },
   { path: '/admin/users', label: 'Users', icon: 'fa-users', roles: ['admin'] },
   { path: '/admin/events', label: 'Events', icon: 'fa-bolt', roles: ['admin'] },
   { path: '/admin/activity', label: 'API Logs', icon: 'fa-history', roles: ['admin'] },

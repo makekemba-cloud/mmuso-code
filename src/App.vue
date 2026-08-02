@@ -17,7 +17,8 @@ import Contact     from './components/Contact.vue'
 import Footer      from './components/Footer.vue'
 import ScrollToTop from './components/ScrollToTop.vue'
 import WhatsApp    from './components/WhatsApp.vue'
-import { useTracker } from './composables/useTracker'   // ← import tracker
+import { useTracker } from './composables/useTracker'
+import Reviews     from './components/Reviews.vue'   // ← import tracker
 
 const popupRef = ref<InstanceType<typeof Popup> | null>(null)
 const route = useRoute()
@@ -84,6 +85,7 @@ watch(() => route.path, (newPath) => {
       <div class="reveal"><Approach /></div>
       <div class="reveal"><Projects /></div>
       <div class="reveal"><WhyUs /></div>
+       <div class="reveal"><Reviews /></div>
       <div class="reveal"><CTA /></div>
       <div class="reveal"><Contact @show-popup="showPopup" /></div>
     </div>

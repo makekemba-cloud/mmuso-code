@@ -147,7 +147,7 @@ const mapSrc = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3485.99468
               />
             </div>
             <!-- Email + Phone (2 columns) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label class="block text-xs sm:text-sm font-medium text-gray-400 mb-0.5 sm:mb-1">Email</label>
                 <input
