@@ -262,13 +262,6 @@ const deleting = ref(false);
 const deleteMessage = ref('');
 let deleteTargetId: string | null = null;
 
-// ── Computed ──
-const filterParams = computed(() => ({
-  name: filters.value.name,
-  rating: filters.value.rating,
-  isHidden: filters.value.isHidden,
-}));
-
 // ── API Calls ──
 const fetchReviews = async () => {
   try {
