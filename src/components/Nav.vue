@@ -32,7 +32,6 @@ function setActive(id: string) {
   closeMobile()
 }
 
-// Universal navigation handler
 function navigateToSection(id: string) {
   closeMobile()
   
@@ -48,15 +47,89 @@ function navigateToSection(id: string) {
   }
 }
 
-let observer: IntersectionObserver | null = null
-
+// ---------- Scroll Progress ----------
 function updateScrollProgress() {
   if (route.path !== '/') return
   const scrollY = window.scrollY
   const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-  scrollProgress.value = (scrollY / maxScroll) * 100
+  scrollProgress.value = maxScroll > 0 ? (scrollY / maxScroll) * 100 : 0
 }
 
+// ---------- Active Section Detection (scroll-based) ----------
+let ticking = false
+
+function updateActiveSection() {
+  if (route.path !== '/') return
+
+  // If at the very top, force 'home'
+  if (window.scrollY < 20) {
+    if (activeSection.value !== 'home') {
+      activeSection.value = 'home'
+    }
+    return
+  }
+
+  const sections = document.querySelectorAll('section[id]')
+  if (!sections.length) return
+
+  const navBar = document.querySelector('nav')
+  const navHeight = navBar ? navBar.offsetHeight : 80
+
+  let bestSection = null
+  let bestScore = Infinity
+
+  for (const section of sections) {
+    const rect = section.getBoundingClientRect()
+    // Skip sections that have completely scrolled past the navbar
+    if (rect.bottom < navHeight) continue
+
+    const distance = rect.top - navHeight
+    // Prefer non‑negative distances (section below navbar)
+    const score = distance >= 0 ? distance : 10000 + distance
+
+    if (score < bestScore) {
+      bestScore = score
+      bestSection = section.id
+    }
+  }
+
+  // Fallback: if no visible section, pick the closest one (even if above)
+  if (!bestSection) {
+    let closestDist = Infinity
+    for (const section of sections) {
+      const rect = section.getBoundingClientRect()
+      const distance = rect.top - navHeight
+      if (Math.abs(distance) < Math.abs(closestDist)) {
+        closestDist = distance
+        bestSection = section.id
+      }
+    }
+  }
+
+  if (!bestSection) {
+    const first = sections[0]
+    if (first) bestSection = first.id
+  }
+
+  if (!bestSection) bestSection = 'home'
+
+  if (activeSection.value !== bestSection) {
+    activeSection.value = bestSection
+  }
+}
+
+function onScroll() {
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      updateActiveSection()   // ← navbar highlight
+      updateScrollProgress()  // ← progress bar (FIXED!)
+      ticking = false
+    })
+    ticking = true
+  }
+}
+
+// ---------- Click outside handler ----------
 function handleClickOutside(e: MouseEvent) {
   const nav = document.querySelector('nav')
   if (mobileOpen.value && nav && !nav.contains(e.target as Node)) {
@@ -64,108 +137,63 @@ function handleClickOutside(e: MouseEvent) {
   }
 }
 
-// Improved IntersectionObserver with better rootMargin
-function initIntersectionObserver() {
-  if (route.path !== '/') return
-  if (observer) observer.disconnect()
-
-  const sections = document.querySelectorAll('section[id]')
-  if (!sections.length) return
-
-  // Get the actual height of the sticky navbar (adjust as needed)
-  const navBar = document.querySelector('nav')
-  const navHeight = navBar ? navBar.offsetHeight : 80
-
-  observer = new IntersectionObserver(
-    (entries) => {
-      // Find the section that is most visible in the viewport
-      let visibleSection = null
-      let maxRatio = 0
-
-      for (const entry of entries) {
-        if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
-          maxRatio = entry.intersectionRatio
-          visibleSection = entry.target.id
-        }
-      }
-
-      // If no section is intersecting, check the topmost section in viewport
-      if (!visibleSection) {
-        for (const entry of entries) {
-          const rect = entry.target.getBoundingClientRect()
-          if (rect.top <= navHeight + 10 && rect.bottom > navHeight + 10) {
-            visibleSection = entry.target.id
-            break
-          }
-        }
-      }
-
-      if (visibleSection && activeSection.value !== visibleSection) {
-        activeSection.value = visibleSection
-      }
-    },
-    {
-      rootMargin: `-${navHeight}px 0px -30% 0px`, // dynamic offset based on navbar height
-      threshold: [0, 0.1, 0.3, 0.5, 0.7, 1]
-    }
-  )
-
-  sections.forEach((section) => observer?.observe(section))
-}
-
-function cleanupObserver() {
-  if (observer) {
-    observer.disconnect()
-    observer = null
-  }
-}
-
-// Watch route changes
+// ---------- Route watcher ----------
 watch(() => route.path, async (newPath) => {
   if (newPath !== '/') {
-    cleanupObserver()
-    activeSection.value = 'home' // reset when leaving homepage
+    activeSection.value = 'home'
   } else {
     await nextTick()
-    initIntersectionObserver()
-    updateScrollProgress()
+    setTimeout(() => {
+      updateActiveSection()
+      updateScrollProgress()
+    }, 100)
   }
 })
 
-// Handle hash on homepage after navigation
+// ---------- Hash handling ----------
 function handleHashOnHome() {
   if (route.path === '/' && route.hash) {
     const id = route.hash.slice(1)
-    // Wait for DOM to be ready
     setTimeout(() => {
       const element = document.getElementById(id)
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' })
         setActive(id)
-        // Clear hash without jumping
         history.pushState(null, '', '/')
       }
     }, 150)
   }
 }
 
+// ---------- Lifecycle ----------
 onMounted(() => {
-  initIntersectionObserver()
-  window.addEventListener('scroll', updateScrollProgress)
+  window.addEventListener('scroll', onScroll)
+  window.addEventListener('resize', () => {
+    // Update both on resize
+    updateActiveSection()
+    updateScrollProgress()
+  })
   document.addEventListener('click', handleClickOutside)
+
   updateScrollProgress()
   handleHashOnHome()
+
+  // Initial calculation after DOM ready
+  setTimeout(() => {
+    updateActiveSection()
+    updateScrollProgress()
+  }, 250)
 })
 
 onUnmounted(() => {
-  cleanupObserver()
-  window.removeEventListener('scroll', updateScrollProgress)
+  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('resize', onScroll)
   document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
 <template>
-  <!-- Vertical Scroll Progress Bar (only show on homepage) -->
+  <!-- Vertical Scroll Progress Bar (only on homepage) -->
   <div v-if="route.path === '/'" class="fixed left-0 top-0 w-1 h-full bg-gray-800 z-[60]">
     <div
       class="bg-gradient-to-b from-blue-500 to-blue-600 w-full transition-all duration-150"
@@ -175,10 +203,7 @@ onUnmounted(() => {
 
   <!-- Floating Cylinder Navigation Bar -->
   <nav class="floating-nav sticky top-4 mx-auto w-[calc(100%-2rem)] max-w-7xl z-50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/20">
-    <!-- Inner container with flex layout -->
     <div class="w-full flex items-center justify-between px-5 py-1.5 md:px-6">
-      
-      <!-- Logo with hover effect -->
       <a 
         href="#"
         class="block transition-all duration-300 hover:scale-105 hover:drop-shadow-lg"
@@ -191,19 +216,18 @@ onUnmounted(() => {
         >
       </a>
 
-      <!-- Desktop Navigation Links with enhanced hover -->
       <div class="hidden md:flex items-center space-x-8 text-gray-300 font-medium">
         <a
-         v-for="item in navItems"
-  :key="item.id"
-  href="#"
-  class="nav-link relative hover:text-[#2563EB] transition-all duration-300"
-  :class="{ 
-    'text-[#2563EB]': activeSection === item.id && route.path === '/',
-    'active': activeSection === item.id && route.path === '/'
-  }"
-  @click.prevent="navigateToSection(item.id)"
->
+          v-for="item in navItems"
+          :key="item.id"
+          href="#"
+          class="nav-link relative hover:text-[#2563EB] transition-all duration-300"
+          :class="{ 
+            'text-[#2563EB]': activeSection === item.id && route.path === '/',
+            'active': activeSection === item.id && route.path === '/'
+          }"
+          @click.prevent="navigateToSection(item.id)"
+        >
           {{ item.label }}
           <span
             v-if="route.path === '/'"
@@ -213,7 +237,6 @@ onUnmounted(() => {
         </a>
       </div>
 
-      <!-- Mobile Toggle Button with hover effect -->
       <button
         class="md:hidden text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"
         @click="toggleMobile"
@@ -221,10 +244,8 @@ onUnmounted(() => {
       >
         <i class="fas text-2xl" :class="mobileOpen ? 'fa-times' : 'fa-bars'"></i>
       </button>
-
     </div>
 
-    <!-- Mobile Dropdown Menu with smooth animation -->
     <Transition
       enter-active-class="transition duration-200 ease-out"
       enter-from-class="opacity-0 -translate-y-2 scale-95"
@@ -253,20 +274,17 @@ onUnmounted(() => {
         </div>
       </div>
     </Transition>
-
   </nav>
 </template>
 
 <style scoped>
 .logo-img {
-  max-height: 40px;   /* keeps the navbar thin */
+  max-height: 40px;
   width: auto;
   transition: transform 0.2s ease;
 }
 
-/* Floating Cylinder Navigation – Wide & Thin */
 .floating-nav {
-  /* Cylinder tube background with soft gradient */
   background: linear-gradient(105deg, 
     rgba(10, 10, 15, 0.92) 0%,
     rgba(20, 20, 30, 0.92) 20%,
@@ -275,22 +293,18 @@ onUnmounted(() => {
     rgba(10, 10, 15, 0.92) 100%
   );
   backdrop-filter: blur(16px);
-  border-radius: 80px;   /* soft tube ends */
-  
-  /* Inner shadows for "caved sides" cylinder look */
+  border-radius: 80px;
   box-shadow: inset 30px 0 30px -20px rgba(0, 0, 0, 0.7),
               inset -30px 0 30px -20px rgba(0, 0, 0, 0.7),
               inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
-  
   border: 1px solid rgba(255, 255, 255, 0.08);
   transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
 }
 
-/* Blue lining (glow + border) on hover */
 .floating-nav:hover {
   box-shadow: inset 25px 0 25px -18px rgba(0, 0, 0, 0.5),
               inset -25px 0 25px -18px rgba(0, 0, 0, 0.5),
-              0 0 0 2px rgba(37, 99, 235, 0.8);   /* ← blue lining */
+              0 0 0 2px rgba(37, 99, 235, 0.8);
   background: linear-gradient(105deg, 
     rgba(15, 15, 22, 0.98) 0%,
     rgba(25, 25, 38, 0.98) 20%,
@@ -301,7 +315,6 @@ onUnmounted(() => {
   border-color: rgba(37, 99, 235, 0.3);
 }
 
-/* Individual nav link styles */
 .nav-link {
   position: relative;
   font-weight: 500;
@@ -313,17 +326,14 @@ onUnmounted(() => {
   text-shadow: 0 0 8px rgba(37, 99, 235, 0.5);
 }
 
-/* Active link text glow (replaces invalid selector) */
 .nav-link.active {
   text-shadow: 0 0 6px rgba(37, 99, 235, 0.4);
 }
 
-/* Mobile menu button active effect */
 button:active {
   transform: scale(0.95);
 }
 
-/* Responsive tweaks */
 @media (max-width: 768px) {
   .floating-nav {
     border-radius: 60px;
@@ -333,7 +343,6 @@ button:active {
   }
 }
 
-/* Mobile dropdown backdrop */
 .md\:hidden .rounded-2xl {
   backdrop-filter: blur(20px);
 }

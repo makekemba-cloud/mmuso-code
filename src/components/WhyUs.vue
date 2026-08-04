@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+
 interface Advantage {
   icon: string
   title: string
@@ -8,39 +10,81 @@ interface Advantage {
 const advantages: Advantage[] = [
   {
     icon: 'fa-rocket',
-    title: 'Modern Technologies',
-    description: 'Our solutions are built with modern technologies that ensure speed, reliability, security, and long-term scalability.',
+    title: 'Innovative Solutions',
+    description: 'We leverage modern technologies and industry best practices to deliver reliable, scalable, and future-ready solutions tailored to your business.',
   },
- {
+  {
     icon: 'fa-shield-alt',
-    title: 'Security First',
-    description: 'We prioritise security with protected authentication, role-based access control, and reliable data management to keep your platform safe and trustworthy.',
+    title: 'Secure & Reliable',
+    description: 'From secure authentication to data protection and system reliability, we build solutions you can trust.',
   },
   {
     icon: 'fa-bolt',
     title: 'Fast & Scalable',
-    description: 'Our systems are designed for speed, performance, and scalability — allowing your business to grow without limitations.',
+    description: 'Our solutions are designed to perform today while remaining flexible enough to support your business as it grows.',
   },
   {
     icon: 'fa-handshake',
     title: 'Client-Focused Partnership',
-    description: 'We work closely with you from concept to launch, delivering transparent communication, reliable support, and long-term value.',
+    description: 'We believe in long-term partnerships built on communication, transparency, and ongoing support—because your success is our success.',
   },
 ]
 
 const industries = [
-  { icon: 'fa-lightbulb',    label: 'Startups' },
-  { icon: 'fa-store',        label: 'Businesses' },
-  { icon: 'fa-running',      label: 'Sports Clubs' },
-  { icon: 'fa-graduation-cap', label: 'Educational Platforms' },
-  { icon: 'fa-heart',        label: 'NPO' }, // ← added NPO
+  { icon: 'fa-lightbulb', label: 'Startups' },
+  { icon: 'fa-store', label: 'Small & Medium Businesses' },
+  { icon: 'fa-building', label: 'Corporate Companies' },
+  { icon: 'fa-heart', label: 'NGOs & NPOs' },
+  { icon: 'fa-gavel', label: 'Law Firms' },
+  { icon: 'fa-heartbeat', label: 'Healthcare' },
+  { icon: 'fa-shopping-cart', label: 'Retail & eCommerce' },
+  { icon: 'fa-hard-hat', label: 'Construction' },
+  { icon: 'fa-running', label: 'Sports Clubs' },
+  { icon: 'fa-graduation-cap', label: 'Schools & Educational Institutions' },
 ]
+
+// Split into two rows
+const firstRow = industries.slice(0, Math.ceil(industries.length / 2))
+const secondRow = industries.slice(Math.ceil(industries.length / 2))
+
+// For mobile marquee: duplicate each row for seamless loop
+const firstRowMarquee = [...firstRow, ...firstRow]
+const secondRowMarquee = [...secondRow, ...secondRow]
+
+const clients = [
+  { name: 'Big Small Insights', url: 'https://www.bigsmallinsights.co.za/' },
+  { name: 'Sibaleka Nani Athletics Club', url: 'https://sibalekananiac.co.za' },
+  { name: 'Let Us Heal', url: 'https://letusheal.co.za/' },
+  { name: 'Sizofakulwazi Foundation', url: 'https://www.sizofakulwazifoundation.org.za/' },
+  { name: 'Mathinyani Plumbing Services', url: 'https://www.mathinyaniplumbing.co.za/' },
+  { name: 'Startups Across South Africa', url: null },
+]
+
+// Reactive mobile detection
+const isMobile = ref(false)
+
+function checkMobile() {
+  isMobile.value = window.innerWidth < 768
+}
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
+
+// Clients arrays (duplicated for mobile marquee)
+const clientsForMobile = [...clients, ...clients]
+const clientsForDesktop = clients
 </script>
 
 <template>
   <section id="why-us" class="relative py-16 md:py-20 bg-gradient-to-b from-black via-[#050816] to-black border-t border-gray-800 overflow-hidden">
     
-    <!-- Floating glowing orbs (reduced opacity on mobile) -->
+    <!-- Floating glowing orbs -->
     <div class="absolute top-1/3 right-1/4 w-80 h-80 bg-blue-500/10 blur-[100px] rounded-full pointer-events-none opacity-50 md:opacity-100"></div>
     <div class="absolute bottom-20 left-10 w-96 h-96 bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none opacity-50 md:opacity-100"></div>
     
@@ -49,7 +93,7 @@ const industries = [
 
     <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
 
-      <!-- Badge (responsive text) -->
+      <!-- Badge -->
       <div class="flex justify-center mb-4">
         <span class="section-badge">
           <span class="pulse-dot"></span>
@@ -57,17 +101,17 @@ const industries = [
         </span>
       </div>
 
-      <!-- Title (responsive) -->
+      <!-- Title -->
       <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-white mb-4">
         Why Choose <span class="text-[#2563EB]">Mmuso Code</span>
       </h2>
 
-      <!-- Intro paragraph (responsive) -->
+      <!-- Intro paragraph -->
       <p class="text-center text-gray-400 max-w-2xl mx-auto mb-12 md:mb-16 text-sm sm:text-base md:text-lg">
-        We combine modern engineering, ironclad security, and a ruthless focus on results — so your digital product not only works, but wins.
+        We combine innovation, reliability, and business-focused thinking to deliver technology solutions that help businesses grow, operate more efficiently, and succeed in the digital world.
       </p>
 
-      <!-- Advantages grid – responsive columns and gaps -->
+      <!-- Advantages grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-8 mb-16 md:mb-20">
         <div
           v-for="item in advantages"
@@ -80,7 +124,7 @@ const industries = [
         </div>
       </div>
 
-      <!-- Elegant divider (responsive) -->
+      <!-- Industries divider -->
       <div class="relative mb-12 md:mb-16 flex items-center justify-center">
         <div class="flex-grow h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
         <span class="mx-4 sm:mx-6 px-2 sm:px-4 py-1 text-[10px] sm:text-xs uppercase tracking-wider text-gray-400 bg-[#050816] border border-gray-700 rounded-full backdrop-blur-sm whitespace-nowrap">
@@ -89,33 +133,106 @@ const industries = [
         <div class="flex-grow h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
       </div>
 
-      <!-- Industries – responsive gap and padding -->
-      <div class="flex flex-wrap justify-center gap-3 sm:gap-4 mb-12 md:mb-16">
-        <div
-          v-for="ind in industries"
-          :key="ind.label"
-          class="flex items-center gap-2 sm:gap-3 bg-[#0a0a0a] border border-gray-800 px-4 sm:px-6 py-3 sm:py-4 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#2563EB]/50 hover:shadow-[0_0_20px_rgba(37,99,235,0.1)]"
-        >
-          <i :class="`fas ${ind.icon} text-[#2563EB] text-base sm:text-xl`"></i>
-          <span class="text-white font-medium text-sm sm:text-base">{{ ind.label }}</span>
+      <!-- Industries – Mobile: two marquee rows, Desktop: two static rows -->
+      <!-- Mobile -->
+      <div v-if="isMobile" class="flex flex-col gap-3 sm:gap-4 mb-12 md:mb-16 overflow-hidden">
+        <!-- Row 1 marquee (moves left) -->
+        <div class="relative overflow-hidden mask-gradient">
+          <div class="marquee-track flex gap-3 sm:gap-4 animate-scroll">
+            <div
+              v-for="(ind, index) in firstRowMarquee"
+              :key="'row1-' + index"
+              class="flex items-center gap-2 sm:gap-3 bg-[#0a0a0a] border border-gray-800 px-4 sm:px-6 py-3 sm:py-4 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#2563EB]/50 hover:shadow-[0_0_20px_rgba(37,99,235,0.1)] flex-shrink-0"
+            >
+              <i :class="`fas ${ind.icon} text-[#2563EB] text-base sm:text-xl`"></i>
+              <span class="text-white font-medium text-sm sm:text-base whitespace-nowrap">{{ ind.label }}</span>
+            </div>
+          </div>
+        </div>
+        <!-- Row 2 marquee (moves right) -->
+        <div class="relative overflow-hidden mask-gradient">
+          <div class="marquee-track flex gap-3 sm:gap-4 animate-scroll-reverse">
+            <div
+              v-for="(ind, index) in secondRowMarquee"
+              :key="'row2-' + index"
+              class="flex items-center gap-2 sm:gap-3 bg-[#0a0a0a] border border-gray-800 px-4 sm:px-6 py-3 sm:py-4 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#2563EB]/50 hover:shadow-[0_0_20px_rgba(37,99,235,0.1)] flex-shrink-0"
+            >
+              <i :class="`fas ${ind.icon} text-[#2563EB] text-base sm:text-xl`"></i>
+              <span class="text-white font-medium text-sm sm:text-base whitespace-nowrap">{{ ind.label }}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Trusted By – responsive text and flex wrap -->
-      <div class="text-center">
-        <p class="text-xs sm:text-sm uppercase tracking-widest text-gray-500 mb-6">Trusted By</p>
-        <div class="flex flex-wrap justify-center gap-4 sm:gap-6 items-center">
-          <a href="https://www.bigsmallinsights.co.za/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-sm sm:text-lg hover:text-[#2563EB] transition">Big Small Insights</a>
-          <div class="w-px h-4 sm:h-6 bg-gray-700 hidden sm:block"></div>
-          <a href="https://sibalekananiac.co.za" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-sm sm:text-lg hover:text-[#2563EB] transition">SNAC Athletics Club</a>
-          <div class="w-px h-4 sm:h-6 bg-gray-700 hidden sm:block"></div>
-          <a href="https://letusheal.co.za/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-sm sm:text-lg hover:text-[#2563EB] transition">Let Us Heal</a>
-          <div class="w-px h-4 sm:h-6 bg-gray-700 hidden sm:block"></div>
-          <a href="https://www.sizofakulwazifoundation.org.za/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-sm sm:text-lg hover:text-[#2563EB] transition">Sizofakulwazi Foundation</a>
-          <div class="w-px h-4 sm:h-6 bg-gray-700 hidden sm:block"></div>
-          <a href="https://khubasitsolutions.co.za/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-sm sm:text-lg hover:text-[#2563EB] transition">Khubas IT Solutions</a>
-          <div class="w-px h-4 sm:h-6 bg-gray-700 hidden sm:block"></div>
-          <div class="text-gray-400 font-semibold text-sm sm:text-lg cursor-default">Startups Across South Africa</div>
+      <!-- Desktop (two rows, static) -->
+      <div v-else class="flex flex-col gap-3 sm:gap-4 mb-12 md:mb-16 overflow-hidden">
+        <!-- Row 1 -->
+        <div class="flex flex-wrap justify-center gap-3 sm:gap-4">
+          <div
+            v-for="ind in firstRow"
+            :key="ind.label"
+            class="flex items-center gap-2 sm:gap-3 bg-[#0a0a0a] border border-gray-800 px-4 sm:px-6 py-3 sm:py-4 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#2563EB]/50 hover:shadow-[0_0_20px_rgba(37,99,235,0.1)]"
+          >
+            <i :class="`fas ${ind.icon} text-[#2563EB] text-base sm:text-xl`"></i>
+            <span class="text-white font-medium text-sm sm:text-base">{{ ind.label }}</span>
+          </div>
+        </div>
+        <!-- Row 2 -->
+        <div class="flex flex-wrap justify-center gap-3 sm:gap-4">
+          <div
+            v-for="ind in secondRow"
+            :key="ind.label"
+            class="flex items-center gap-2 sm:gap-3 bg-[#0a0a0a] border border-gray-800 px-4 sm:px-6 py-3 sm:py-4 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#2563EB]/50 hover:shadow-[0_0_20px_rgba(37,99,235,0.1)]"
+          >
+            <i :class="`fas ${ind.icon} text-[#2563EB] text-base sm:text-xl`"></i>
+            <span class="text-white font-medium text-sm sm:text-base">{{ ind.label }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-part Trust section -->
+      <div class="space-y-10 md:space-y-12">
+        <!-- Trusted by Businesses & Organizations -->
+        <div>
+          <p class="text-xs sm:text-sm uppercase tracking-widest text-gray-500 text-center mb-6">
+            Trusted by Businesses & Organizations
+          </p>
+          <!-- Mobile: marquee, Desktop: static flex wrap -->
+          <div class="relative overflow-hidden mask-gradient md:mask-none">
+            <div class="marquee-track flex gap-4 sm:gap-6 items-center animate-scroll md:animate-none md:flex-wrap md:justify-center">
+              <template v-for="(client, index) in (isMobile ? clientsForMobile : clientsForDesktop)" :key="index">
+                <a
+                  v-if="client.url"
+                  :href="client.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-gray-400 font-semibold text-sm sm:text-lg hover:text-[#2563EB] transition flex-shrink-0"
+                >
+                  {{ client.name }}
+                </a>
+                <span
+                  v-else
+                  class="text-gray-400 font-semibold text-sm sm:text-lg cursor-default flex-shrink-0"
+                >
+                  {{ client.name }}
+                </span>
+                <span
+                  v-if="index < (isMobile ? clientsForMobile.length - 1 : clientsForDesktop.length - 1)"
+                  class="w-px h-4 sm:h-6 bg-gray-700 flex-shrink-0"
+                ></span>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- Technology Partners (static) -->
+        <div>
+          <p class="text-xs sm:text-sm uppercase tracking-widest text-gray-500 text-center mb-6">
+            Technology Partners
+          </p>
+          <div class="flex flex-wrap justify-center gap-4 sm:gap-6 items-center">
+            <a href="https://khubasitsolutions.co.za/" target="_blank" rel="noopener noreferrer" class="text-gray-400 font-semibold text-sm sm:text-lg hover:text-[#2563EB] transition">Khubas IT Solutions</a>
+          </div>
         </div>
       </div>
 
@@ -147,5 +264,60 @@ const industries = [
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+/* Marquee styles */
+.mask-gradient {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.md\:mask-none {
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+}
+
+/* Row 1: moves left (0 → -50%) */
+.animate-scroll {
+  animation: scroll-left 35s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Row 2: moves right (-50% → 0) */
+.animate-scroll-reverse {
+  animation: scroll-right 35s linear infinite;
+}
+
+@keyframes scroll-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+/* Hover pause for both */
+.animate-scroll:hover,
+.animate-scroll-reverse:hover {
+  animation-play-state: paused;
+}
+
+/* Disable on desktop */
+@media (min-width: 768px) {
+  .animate-scroll,
+  .animate-scroll-reverse {
+    animation: none !important;
+    transform: translateX(0) !important;
+  }
+  .marquee-track {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
 </style>

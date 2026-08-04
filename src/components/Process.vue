@@ -9,31 +9,31 @@ interface ProcessStep {
 const steps: ProcessStep[] = [
   {
     number: '01',
-    icon: 'fa-lightbulb',
-    title: 'Strategy & Discovery',
+    icon: 'fa-comment-dots',
+    title: 'Discover & Consult',
     description:
-      'We explore your vision, goals, and technical requirements to create a clear roadmap for success.',
+      'Understanding your business, goals, and challenges to recommend the right solution.',
   },
   {
     number: '02',
-    icon: 'fa-layer-group',
-    title: 'Design & Architecture',
+    icon: 'fa-pencil-ruler',
+    title: 'Plan & Design',
     description:
-      'Crafting intuitive user experiences, scalable system architecture, and modern interface designs.',
+      'Creating a clear plan, user-friendly designs, and the right technical approach.',
   },
   {
     number: '03',
-    icon: 'fa-code',
-    title: 'Development',
+    icon: 'fa-cogs',
+    title: 'Build & Implement',
     description:
-      'Building secure, high-performance digital solutions using modern technologies and clean engineering practices.',
+      'Building software, setting up solutions, or implementing IT – with quality and security at every step.',
   },
   {
     number: '04',
     icon: 'fa-rocket',
-    title: 'Launch & Growth',
+    title: 'Launch & Support',
     description:
-      'Deploying production-ready platforms with continuous support, performance optimization, security updates, and future scalability built-in.',
+      'Deploy, train, and support with ongoing maintenance and updates.',
   },
 ]
 </script>
@@ -41,34 +41,34 @@ const steps: ProcessStep[] = [
 <template>
   <section id="process" class="relative py-16 md:py-20 bg-gradient-to-b from-black via-[#050816] to-black border-t border-gray-800 overflow-hidden">
     
-    <!-- Floating glowing orbs – reduced opacity on mobile -->
+    <!-- Floating glowing orbs -->
     <div class="absolute top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#2563EB]/10 blur-[120px] rounded-full pointer-events-none opacity-50 md:opacity-100"></div>
     <div class="absolute bottom-10 right-0 w-80 h-80 bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none opacity-50 md:opacity-100"></div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
 
-      <!-- Badge (responsive text) -->
+      <!-- Badge -->
       <div class="flex justify-center mb-4">
         <span class="section-badge">
           <span class="pulse-dot"></span>
-          <span class="text-xs sm:text-sm text-[#2563EB] font-semibold">From Vision to Reality</span>
+          <span class="text-xs sm:text-sm text-[#2563EB] font-semibold">Our Process</span>
         </span>
       </div>
 
-      <!-- Title (responsive) -->
+      <!-- Heading -->
       <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-white mb-4">
-        How We Bring <span class="text-[#2563EB]">Ideas To Life</span>
+        Our <span class="text-[#2563EB]">Proven Process</span>
       </h2>
 
-      <!-- Intro paragraph (responsive) -->
+      <!-- Description -->
       <p class="text-center text-gray-400 max-w-2xl mx-auto mb-12 md:mb-16 text-sm sm:text-base md:text-lg">
-        A streamlined development process designed to transform ideas into scalable, high-performance digital experiences.
+        Every project begins with understanding your business. From planning and development to deployment and ongoing support, we follow a proven process to deliver reliable technology solutions that help your business grow.
       </p>
 
-      <!-- Steps grid – responsive columns -->
+      <!-- Steps grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 relative">
 
-        <!-- Connector line (desktop only, hidden on mobile & tablet) -->
+        <!-- Connector line (desktop only) -->
         <div class="hidden lg:block absolute top-10 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-transparent via-[#2563EB]/40 to-transparent z-0"></div>
 
         <div
@@ -76,12 +76,12 @@ const steps: ProcessStep[] = [
           :key="step.title"
           class="relative z-10 bg-[#0a0a0a] p-5 md:p-6 rounded-2xl border border-gray-800 text-center transition-all duration-500 hover:-translate-y-1 hover:border-[#2563EB]/50 hover:shadow-[0_0_40px_rgba(37,99,235,0.15)]"
         >
-          <!-- Step number badge – responsive size -->
+          <!-- Step number badge -->
           <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#2563EB] text-white text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">
             {{ step.number }}
           </div>
 
-          <!-- Icon container – responsive -->
+          <!-- Icon container -->
           <div class="w-12 h-12 md:w-14 md:h-14 bg-[#2563EB]/10 rounded-full flex items-center justify-center text-[#2563EB] text-xl md:text-2xl mx-auto mt-4 mb-3 md:mb-4">
             <i :class="`fas ${step.icon}`"></i>
           </div>

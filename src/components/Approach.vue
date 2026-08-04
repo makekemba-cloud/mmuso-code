@@ -52,7 +52,7 @@ const items: ApproachItem[] = [
       
       <!-- Intro paragraph – responsive -->
       <p class="text-center text-gray-400 max-w-2xl mx-auto mb-12 md:mb-16 text-sm sm:text-base md:text-lg">
-        Beyond the workflow — these are the principles that guide every decision, every line of code, and every client partnership.
+        Beyond the workflow these are the principles that guide every decision, every line of code, and every client partnership.
       </p>
 
       <!-- Approach grid – responsive: 1 column on mobile, 3 columns on desktop -->

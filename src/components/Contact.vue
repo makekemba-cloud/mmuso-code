@@ -18,10 +18,17 @@ const form = ref({
 })
 
 const subjectOptions = [
-  { value: 'General Inquiry', label: 'General Inquiry' },
-  { value: 'Project Quote', label: 'Project Quote' },
+  { value: 'Request a Quote', label: 'Request a Quote' },
+  { value: 'Book a Consultation', label: 'Book a Consultation' },
+  { value: 'Website Development', label: 'Website Development' },
+  { value: 'Business Systems', label: 'Business Systems' },
+  { value: 'Mobile App Development', label: 'Mobile App Development' },
+  { value: 'Managed IT Services', label: 'Managed IT Services' },
+  { value: 'Business Solutions', label: 'Business Solutions' },
+  { value: 'Website Services', label: 'Website Services' },
   { value: 'Technical Support', label: 'Technical Support' },
   { value: 'Partnership', label: 'Partnership' },
+  { value: 'General Inquiry', label: 'General Inquiry' },
   { value: 'Other', label: 'Other' },
 ]
 
