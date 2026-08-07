@@ -1,114 +1,185 @@
-<!-- FloatingActions.vue -->
 <template>
-  <!-- Startup Message Toast – opens WhatsApp with pre‑filled message -->
+  <!-- Startup Message -->
   <Transition
-    enter-active-class="transition-all duration-300 ease-out"
-    enter-from-class="opacity-0 translate-y-4 scale-95"
+    enter-active-class="transition-all duration-500 ease-out"
+    enter-from-class="opacity-0 translate-y-6 scale-95"
     enter-to-class="opacity-100 translate-y-0 scale-100"
-    leave-active-class="transition-all duration-200 ease-in"
+    leave-active-class="transition-all duration-300 ease-in"
     leave-from-class="opacity-100 translate-y-0 scale-100"
-    leave-to-class="opacity-0 translate-y-4 scale-95"
+    leave-to-class="opacity-0 translate-y-6 scale-95"
   >
-    <a
+    <div
       v-if="showStartupMessage"
-      :href="whatsappLink"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="fixed bottom-24 right-5 sm:bottom-28 sm:right-5 z-50 max-w-xs sm:max-w-sm bg-gradient-to-r from-[#0a0a0a] to-[#050816] backdrop-blur-md border border-gray-700 rounded-2xl shadow-2xl p-4 cursor-pointer hover:border-[#2563EB]/50 transition-all duration-300 group/message"
+      class="fixed bottom-24 right-5 sm:bottom-28 sm:right-5 z-50 w-[280px] sm:w-[320px] max-w-[calc(100vw-2rem)] bg-gradient-to-br from-[#0a0a0a] to-[#050816] border border-gray-700 rounded-xl shadow-2xl backdrop-blur-xl overflow-hidden"
     >
-      <div class="flex items-start gap-3">
-        <!-- Icon -->
-        <div class="flex-shrink-0 w-10 h-10 bg-[#2563EB]/20 rounded-full flex items-center justify-center group-hover/message:bg-[#2563EB]/30 transition">
-          <i class="fab fa-whatsapp text-[#25D366] text-lg"></i>
+      <!-- Header -->
+      <div class="flex items-center justify-between px-3 py-2 border-b border-gray-800">
+        <div class="flex items-center gap-1.5">
+          <span class="relative flex h-2 w-2">
+            <span
+              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"
+            ></span>
+            <span
+              class="relative inline-flex rounded-full h-2 w-2 bg-green-500"
+            ></span>
+          </span>
+
+          <span class="text-white font-medium text-[10px]">
+            MMUSOCODE
+          </span>
+
+          <span class="text-[9px] text-green-400">
+            Online
+          </span>
         </div>
-        <!-- Message -->
-        <div class="flex-1">
-          <h4 class="text-white font-semibold text-sm sm:text-base">Let’s Chat on WhatsApp 💬</h4>
-          <p class="text-gray-400 text-xs sm:text-sm mt-1">
-            Click here to start a conversation – we’d love to hear about your project!
-          </p>
-          <p class="text-gray-500 text-[10px] sm:text-xs mt-2 flex items-center gap-1">
-            <i class="fas fa-external-link-alt text-gray-600 text-[9px]"></i> Opens WhatsApp
-          </p>
-        </div>
-        <!-- Close button (stops propagation so clicking it only dismisses, doesn't open WhatsApp) -->
+
         <button
-          @click.stop="dismissStartupMessage"
-          class="text-gray-500 hover:text-gray-300 transition"
-          aria-label="Close message"
+          @click="dismissStartupMessage"
+          class="text-gray-500 hover:text-white transition text-xs"
         >
-          <i class="fas fa-times text-sm"></i>
+          <i class="fas fa-times"></i>
         </button>
       </div>
-    </a>
+
+      <!-- Content -->
+      <div class="p-3">
+
+        <h3 class="text-white text-sm font-semibold mb-1">
+          Need a Technology Solution?
+        </h3>
+
+        <p class="text-gray-400 text-[11px] leading-4 mb-2">
+          Websites • Software • IT Support • Business Solutions
+        </p>
+
+        <!-- Condensed checklist (single line) -->
+        <p class="text-[10px] text-gray-400 flex items-center gap-1.5 mb-2.5">
+          <i class="fas fa-check-circle text-[#2563EB] text-[10px]"></i>
+          Free Consultation
+          <span class="text-gray-600">•</span>
+          <i class="fas fa-check-circle text-[#2563EB] text-[10px]"></i>
+          No Obligation Quote
+          <span class="text-gray-600">•</span>
+          <i class="fas fa-check-circle text-[#2563EB] text-[10px]"></i>
+          Fast Response
+        </p>
+
+        <!-- Buttons (smaller) -->
+        <div class="grid grid-cols-2 gap-2 mb-2">
+
+          <a
+            :href="websiteQuoteLink"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="bg-[#2563EB] hover:bg-blue-600 text-white rounded-lg py-1.5 text-[10px] font-medium text-center transition"
+          >
+            🌐 Website
+          </a>
+
+          <a
+            :href="itSupportLink"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="bg-[#111827] hover:bg-gray-800 text-white rounded-lg py-1.5 text-[10px] font-medium text-center transition"
+          >
+            💻 IT Support
+          </a>
+
+        </div>
+
+        <a
+          :href="generalWhatsappLink"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center gap-1.5 w-full bg-[#25D366] hover:bg-[#1ebe5d] text-white rounded-lg py-2 text-[11px] font-medium transition"
+        >
+          <i class="fab fa-whatsapp text-sm"></i>
+          Chat on WhatsApp
+        </a>
+
+      </div>
+    </div>
   </Transition>
 
-  <!-- WhatsApp Button (same as before) -->
+  <!-- Floating WhatsApp Button -->
   <a
-    href="https://wa.me/27791189866"
+    :href="generalWhatsappLink"
     target="_blank"
     rel="noopener noreferrer"
-    class="group fixed bottom-5 right-5 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#1ebe5d] text-white rounded-full shadow-lg shadow-[#25D366]/30 flex items-center justify-center transition-all hover:scale-110 hover:shadow-[#25D366]/50"
-    aria-label="Chat on WhatsApp"
+    class="group fixed bottom-5 right-5 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#1ebe5d] rounded-full shadow-xl shadow-[#25D366]/30 flex items-center justify-center transition-all duration-300 hover:scale-110"
   >
-    <i class="fab fa-whatsapp text-2xl"></i>
-    <span class="absolute right-full mr-2 flex items-center justify-center whitespace-nowrap bg-black/80 text-white text-xs px-3 py-1 rounded opacity-0 group-hover:opacity-100 transition-all">
-      Chat with us
+    <i class="fab fa-whatsapp text-white text-2xl"></i>
+
+    <span
+      class="absolute right-full mr-3 whitespace-nowrap bg-black text-white text-xs px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition"
+    >
+      Need help?
     </span>
   </a>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
-const showStartupMessage = ref(true)
-const showScroll = ref(false)
+const showStartupMessage = ref(false)
 
-// Pre‑filled WhatsApp message
-const whatsappMessage = encodeURIComponent(
-  "Hi Mmuso Code! 👋\n\nI saw your startup message and I'd love to discuss a project. Can you tell me more about your services?"
-)
+const phone = '27791189866'
 
-// Full WhatsApp URL with pre‑filled text
-const whatsappLink = computed(() => `https://wa.me/27791189866?text=${whatsappMessage}`)
+const generalWhatsappLink = computed(() => {
+  return `https://wa.me/${phone}?text=${encodeURIComponent(
+    `Hi MMUSOCODE! 👋
 
-const handleScroll = () => {
-  showScroll.value = window.scrollY > 300
-}
+I'm interested in your services and would like to discuss my project.
 
-const dismissStartupMessage = () => {
+Please contact me when you're available.`
+  )}`
+})
+
+const websiteQuoteLink = computed(() => {
+  return `https://wa.me/${phone}?text=${encodeURIComponent(
+    `Hi MMUSOCODE! 👋
+
+I'd like to request a quotation for a website.
+
+Business Name:
+Type of Website:
+Additional Information:`
+  )}`
+})
+
+const itSupportLink = computed(() => {
+  return `https://wa.me/${phone}?text=${encodeURIComponent(
+    `Hi MMUSOCODE! 👋
+
+I'm interested in your Managed IT Services.
+
+Please tell me more about your IT Support solutions.`
+  )}`
+})
+
+function dismissStartupMessage() {
   showStartupMessage.value = false
-  sessionStorage.setItem('mmusocode_startup_dismissed', 'true')
+  sessionStorage.setItem('mmusocode-popup-dismissed', 'true')
 }
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
 
-  const dismissed = sessionStorage.getItem('mmusocode_startup_dismissed')
-  if (dismissed === 'true') {
-    showStartupMessage.value = false
-  } else {
-    // Auto‑dismiss after 6 seconds
-    setTimeout(() => {
-      if (showStartupMessage.value) {
-        showStartupMessage.value = false
-        sessionStorage.setItem('mmusocode_startup_dismissed', 'true')
-      }
-    }, 6000)
-  }
-})
+  if (sessionStorage.getItem('mmusocode-popup-dismissed') === 'true')
+    return
 
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
+  // Wait 2 seconds before showing
+  setTimeout(() => {
+    showStartupMessage.value = true
+  }, 2000)
+
+  // Auto hide after 12 seconds
+  setTimeout(() => {
+    if (showStartupMessage.value) {
+      dismissStartupMessage()
+    }
+  }, 14000)
 })
 </script>
 
 <style scoped>
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-.group:hover i {
-  animation: pulse 2s infinite;
-}
 </style>

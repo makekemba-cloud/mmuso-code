@@ -31,7 +31,7 @@
         sidebarCollapsed ? 'md:w-20' : 'md:w-64'
       ]"
     >
-      <!-- Header area: logo + (optional) collapse button on the right -->
+      <!-- Header area -->
       <div class="border-b border-gray-800">
         <div class="flex items-center justify-between p-4">
           <img
@@ -40,7 +40,6 @@
             class="h-8 transition-all duration-300"
             :class="sidebarCollapsed ? 'md:mx-auto' : ''"
           />
-          <!-- Collapse button when expanded (right of logo) -->
           <button
             v-if="!sidebarCollapsed"
             @click="toggleSidebar"
@@ -48,7 +47,6 @@
           >
             <i class="fas fa-chevron-left"></i>
           </button>
-          <!-- Mobile close button -->
           <button
             @click="closeMobileMenu"
             class="md:hidden text-gray-400 hover:text-white"
@@ -56,7 +54,6 @@
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <!-- Collapse button when collapsed (below logo, centered) -->
         <div v-if="sidebarCollapsed" class="hidden md:block pb-4 flex text-center justify-center">
           <button
             @click="toggleSidebar"
@@ -74,7 +71,7 @@
           :key="item.path"
           :to="item.path"
           @click="closeMobileMenu"
-          class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 transition-colors"
+          class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 transition-colors relative"
           :class="{
             'justify-center': sidebarCollapsed,
             'bg-gray-800': $route.path.includes(item.path)
@@ -83,6 +80,14 @@
           <i :class="`fas ${item.icon} w-5 text-lg`"></i>
           <span class="ml-3" :class="{ 'md:hidden': sidebarCollapsed }">
             {{ item.label }}
+          </span>
+          <!-- Badge for Reviews link -->
+          <span
+            v-if="item.path === '/admin/reviews' && unreadCount > 0"
+            class="absolute right-4 top-1/2 -translate-y-1/2 bg-blue-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center"
+            :class="{ 'md:hidden': sidebarCollapsed }"
+          >
+            {{ unreadCount > 99 ? '99+' : unreadCount }}
           </span>
         </router-link>
       </nav>
@@ -117,6 +122,88 @@
             {{ pageTitle }}
           </h1>
           <div class="flex items-center gap-3 md:gap-4">
+            <!-- Notification Bell -->
+            <div class="relative">
+              <button
+                @click="toggleNotifications"
+                class="text-gray-400 hover:text-white transition-colors relative"
+                aria-label="Notifications"
+              >
+                <i class="fas fa-bell text-lg md:text-xl"></i>
+                <span
+                  v-if="unreadCount > 0"
+                  class="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center"
+                >
+                  {{ unreadCount > 99 ? '99+' : unreadCount }}
+                </span>
+              </button>
+
+              <!-- Dropdown – only shows unread notifications -->
+              <div
+                v-if="showNotifications"
+                class="absolute right-0 mt-2 w-80 md:w-96 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl overflow-hidden z-50"
+              >
+                <div class="p-3 border-b border-gray-800 flex justify-between items-center">
+                  <span class="text-white font-semibold text-sm">Notifications</span>
+                  <div class="flex items-center gap-2">
+                    <button
+                      v-if="unreadCount > 0"
+                      @click="markAllAsRead"
+                      class="text-blue-400 hover:text-blue-300 text-xs"
+                    >
+                      Mark all read
+                    </button>
+                    <button
+                      @click="showNotifications = false"
+                      class="text-gray-400 hover:text-white"
+                    >
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="max-h-80 overflow-y-auto">
+                  <div
+                    v-if="unreadNotifications.length === 0"
+                    class="p-4 text-center text-gray-500 text-sm"
+                  >
+                    All caught up! 🎉
+                  </div>
+                  <div
+                    v-for="notif in unreadNotifications"
+                    :key="notif._id"
+                    class="p-3 border-b border-gray-800/50 hover:bg-gray-800/50 transition-colors"
+                  >
+                    <div class="flex items-start gap-2">
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                          <span class="font-medium text-white text-sm">{{ notif.title }}</span>
+                        </div>
+                        <p class="text-gray-400 text-xs">{{ notif.message }}</p>
+                        <span class="text-gray-600 text-[10px]">{{ new Date(notif.createdAt).toLocaleString() }}</span>
+                      </div>
+                      <router-link
+                        v-if="notif.link"
+                        :to="notif.link"
+                        class="text-blue-400 hover:text-blue-300 text-xs whitespace-nowrap"
+                        @click="showNotifications = false; markAsRead(notif._id)"
+                      >
+                        View
+                      </router-link>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-2 border-t border-gray-800 text-center">
+                  <router-link
+                    to="/admin/reviews"
+                    class="text-blue-400 hover:text-blue-300 text-sm"
+                    @click="showNotifications = false"
+                  >
+                    View all reviews
+                  </router-link>
+                </div>
+              </div>
+            </div>
+
             <span class="text-gray-400 text-xs md:text-sm hidden sm:inline">
               Welcome, <span class="text-white font-medium">{{ userName }}</span>
             </span>
@@ -139,7 +226,7 @@
       </footer>
     </div>
 
-    <!-- Logout Confirmation Modal -->
+    <!-- Logout Modal -->
     <Teleport to="body">
       <div
         v-if="showLogoutModal"
@@ -174,9 +261,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTracker } from '../../composables/useTracker'
+import axios from 'axios'
 
 const router = useRouter()
 const route = useRoute()
@@ -184,7 +272,18 @@ const sidebarCollapsed = ref(false)
 const showLogoutModal = ref(false)
 const isMobileMenuOpen = ref(false)
 
-// --- JWT decoder ---
+// ── Notification state ──
+const notifications = ref<any[]>([])
+const unreadCount = ref(0)
+const showNotifications = ref(false)
+let refreshInterval: number | null = null
+
+// ── Only unread notifications for dropdown ──
+const unreadNotifications = computed(() =>
+  notifications.value.filter(n => !n.read)
+)
+
+// ── JWT decoder ──
 function decodeJWT(token: string): any {
   if (!token) return null
   try {
@@ -205,7 +304,7 @@ function decodeJWT(token: string): any {
   }
 }
 
-// --- Derived user info from token ---
+// ── Derived user info ──
 const userInfo = computed(() => {
   const token = localStorage.getItem('adminToken')
   if (!token) return null
@@ -215,14 +314,14 @@ const userInfo = computed(() => {
 const userName = computed(() => userInfo.value?.username || 'Admin')
 const userRole = computed(() => userInfo.value?.role || 'viewer')
 
-// --- Navigation ---
+// ── Navigation ──
 const navItems = [
-  { path: '/admin/dashboard', label: 'Dashboard', icon: 'fa-chart-line', roles: ['admin'] },
-  { path: '/admin/projects', label: 'Projects', icon: 'fa-code-branch', roles: ['admin'] },
-  { path: '/admin/reviews', label: 'Reviews', icon: 'fa-star', roles: ['admin'] },
-  { path: '/admin/users', label: 'Users', icon: 'fa-users', roles: ['admin'] },
-  { path: '/admin/events', label: 'Events', icon: 'fa-bolt', roles: ['admin'] },
-  { path: '/admin/activity', label: 'API Logs', icon: 'fa-history', roles: ['admin'] },
+  { path: '/admin/dashboard', label: 'Dashboard', icon: 'fa-chart-line' },
+  { path: '/admin/projects', label: 'Projects', icon: 'fa-code-branch' },
+  { path: '/admin/reviews', label: 'Reviews', icon: 'fa-star' },
+  { path: '/admin/users', label: 'Users', icon: 'fa-users' },
+  { path: '/admin/events', label: 'Events', icon: 'fa-bolt' },
+  { path: '/admin/activity', label: 'API Logs', icon: 'fa-history' },
 ]
 
 const pageTitle = computed(() => {
@@ -230,12 +329,12 @@ const pageTitle = computed(() => {
   return item ? item.label : 'Dashboard'
 })
 
-// --- Sidebar toggle (desktop) ---
+// ── Sidebar toggle ──
 const toggleSidebar = () => {
   sidebarCollapsed.value = !sidebarCollapsed.value
 }
 
-// --- Mobile menu toggle ---
+// ── Mobile menu ──
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
 }
@@ -243,7 +342,67 @@ const closeMobileMenu = () => {
   isMobileMenuOpen.value = false
 }
 
-// --- Logout modal ---
+// ── Notifications ──
+const toggleNotifications = () => {
+  showNotifications.value = !showNotifications.value
+}
+
+const fetchNotifications = async () => {
+  try {
+    const token = localStorage.getItem('adminToken')
+    if (!token) return
+
+    const res = await axios.get('/api/admin/notifications', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    notifications.value = res.data.notifications || []
+    unreadCount.value = res.data.unreadCount || 0
+  } catch (err) {
+    console.error('Failed to fetch notifications:', err)
+  }
+}
+
+const markAsRead = async (id: string) => {
+  try {
+    const token = localStorage.getItem('adminToken')
+    await axios.patch(`/api/admin/notifications/${id}/read`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    // Remove the notification from the list immediately
+    notifications.value = notifications.value.filter(n => n._id !== id)
+    unreadCount.value = Math.max(0, unreadCount.value - 1)
+  } catch (err) {
+    console.error('Failed to mark notification as read:', err)
+  }
+}
+
+const markAllAsRead = async () => {
+  try {
+    const token = localStorage.getItem('adminToken')
+    await axios.patch('/api/admin/notifications/mark-all-read', {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    // Remove all unread notifications from the list
+    notifications.value = notifications.value.filter(n => n.read)
+    unreadCount.value = 0
+  } catch (err) {
+    console.error('Failed to mark all as read:', err)
+  }
+}
+
+// ── Clear notifications when visiting reviews page ──
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath === '/admin/reviews') {
+      // Mark all as read and clear the list
+      markAllAsRead()
+    }
+  },
+  { immediate: true }
+)
+
+// ── Logout modal ──
 const openLogoutModal = () => {
   showLogoutModal.value = true
 }
@@ -253,7 +412,7 @@ const closeLogoutModal = () => {
 }
 
 const confirmLogout = async () => {
-  // Track logout event
+  // Track logout
   try {
     const { trackEvent } = useTracker()
     await trackEvent({
@@ -265,7 +424,6 @@ const confirmLogout = async () => {
       }
     })
   } catch (_) {
-    // Fallback direct fetch
     try {
       await fetch('/api/events', {
         method: 'POST',
@@ -287,11 +445,23 @@ const confirmLogout = async () => {
     } catch (_) { /* ignore */ }
   }
 
-  // Clear token and redirect
   localStorage.removeItem('adminToken')
   closeLogoutModal()
   router.push('/admin/login')
 }
+
+// ── Lifecycle ──
+onMounted(() => {
+  fetchNotifications()
+  refreshInterval = window.setInterval(fetchNotifications, 30000)
+})
+
+onUnmounted(() => {
+  if (refreshInterval) {
+    clearInterval(refreshInterval)
+    refreshInterval = null
+  }
+})
 </script>
 
 <style scoped>

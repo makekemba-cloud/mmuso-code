@@ -116,4 +116,19 @@ router.get('/stats/breakdown', async (req, res) => {
   }
 });
 
+// GET /api/admin/reviews/unread-count?since=timestamp
+router.get('/unread-count', async (req, res) => {
+  try {
+    const since = req.query.since ? new Date(req.query.since as string) : new Date(0);
+    const count = await Review.countDocuments({
+      isHidden: false,
+      createdAt: { $gt: since }
+    });
+    res.json({ count });
+  } catch (err) {
+    console.error('Failed to fetch unread count:', err);
+    res.status(500).json({ error: 'Failed to fetch unread count' });
+  }
+});
+
 export default router;

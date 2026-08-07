@@ -1,5 +1,6 @@
 import express from 'express';
 import Review from '../models/Review';
+import Notification from '../models/Notification';
 
 const router = express.Router();
 
@@ -41,7 +42,15 @@ router.post('/', async (req, res) => {
       userAgent,
     });
     await review.save();
-    res.status(201).json({ success: true, review });
+    // Create notification for admins
+await Notification.create({
+  type: 'review',
+  title: 'New Review Submitted',
+  message: `${review.name} left a ${review.rating}★ review: "${review.comment.substring(0, 60)}${review.comment.length > 60 ? '...' : ''}"`,
+  link: '/admin/reviews',
+});
+
+res.status(201).json({ success: true, review });
   } catch (err) {
     console.error('Failed to submit review:', err);
     res.status(500).json({ error: 'Failed to submit review' });

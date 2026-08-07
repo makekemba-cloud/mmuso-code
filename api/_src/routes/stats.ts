@@ -106,4 +106,23 @@ router.get('/activities', async (req, res) => {
   }
 });
 
+// ── GET /api/admin/stats/ips ──
+router.get('/ips', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit as string) || 50; // default 50, can be higher
+    const results = await ActivityLog.aggregate([
+      { $match: { ip: { $ne: '' } } },
+      { $group: { _id: '$ip', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: limit },
+      { $project: { ip: '$_id', count: 1, _id: 0 } }
+    ]);
+    const totalUnique = await ActivityLog.distinct('ip').then(arr => arr.filter(Boolean).length);
+    res.json({ ips: results, totalUnique });
+  } catch (err) {
+    console.error('Failed to fetch IP stats:', err);
+    res.status(500).json({ error: 'Failed to fetch IP stats' });
+  }
+});
+
 export default router;

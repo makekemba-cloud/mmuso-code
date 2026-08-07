@@ -98,7 +98,32 @@
         </div>
       </div>
     </div>
-
+ <!-- IP Address Summary -->
+    <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800 mb-4 sm:mb-6">
+      <div class="flex justify-between items-center mb-3 sm:mb-4">
+        <h3 class="text-xs sm:text-sm font-semibold text-white">Top IP Addresses</h3>
+        <span class="text-gray-400 text-xs sm:text-sm">Unique IPs: {{ ipSummary.totalUnique || 0 }}</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="text-gray-400 text-[10px] sm:text-xs uppercase border-b border-gray-700">
+            <tr>
+              <th class="pb-2 pr-2 sm:pr-4">IP Address</th>
+              <th class="pb-2">Requests</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in ipSummary.ips" :key="item.ip" class="border-b border-gray-700/50 last:border-0">
+              <td class="py-1 sm:py-2 pr-2 sm:pr-4 text-gray-300 text-xs sm:text-sm font-mono">{{ item.ip || 'unknown' }}</td>
+              <td class="py-1 sm:py-2 text-gray-300 text-xs sm:text-sm font-bold">{{ item.count }}</td>
+            </tr>
+            <tr v-if="ipSummary.ips.length === 0">
+              <td colspan="2" class="py-3 sm:py-4 text-center text-gray-500 text-xs sm:text-sm">No data yet</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
     <!-- Top pages table -->
     <div class="bg-gray-900/50 rounded-xl p-4 sm:p-5 border border-gray-800">
       <h3 class="text-xs sm:text-sm font-semibold text-white mb-3 sm:mb-4">Top API Endpoints</h3>
@@ -311,11 +336,27 @@ function renderPieChart() {
     }
   })
 }
+const ipSummary = ref({
+  ips: [] as { ip: string; count: number }[],
+  totalUnique: 0
+})
 
+const fetchIpSummary = async () => {
+  try {
+    const token = localStorage.getItem('adminToken')
+    const response = await axios.get('/api/admin/stats/ips', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    ipSummary.value = response.data
+  } catch (err) {
+    console.error('Failed to fetch IP summary', err)
+  }
+}
 onMounted(() => {
   fetchStats()
   fetchReviewStats()
   fetchLogs()
+  fetchIpSummary()
 })
 </script>
 

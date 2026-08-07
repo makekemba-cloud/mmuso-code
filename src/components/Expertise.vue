@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useTracker } from '../composables/useTracker'   // ← import tracker
 
 interface ServiceModal {
   overview: string
@@ -320,15 +321,55 @@ const items: ExpertiseItem[] = [
 const selectedService = ref<Service | null>(null)
 const isModalOpen = ref(false)
 
+// ── Tracker ──
+const { trackEvent } = useTracker()
+
+// ── Modal functions ──
 function openModal(service: Service) {
   selectedService.value = service
   isModalOpen.value = true
   document.body.style.overflow = 'hidden'
+
+  // Fire‑and‑forget tracking (never blocks)
+  try {
+    trackEvent({
+      event: 'modal_open',
+      category: 'expertise',
+      element: service.title,
+      metadata: {
+        service: service.title,
+        popular: service.popular || false
+      }
+    })
+  } catch (_) {
+    // ignore
+  }
 }
 
 function closeModal() {
+  // 1. Force‑close the modal immediately
   isModalOpen.value = false
   document.body.style.overflow = ''
+  
+  // 2. Clear the selected service (after saving its title for tracking)
+  const service = selectedService.value
+  selectedService.value = null
+
+  // 3. Send tracking event (best‑effort, never blocks)
+  if (service) {
+    try {
+      trackEvent({
+        event: 'modal_close',
+        category: 'expertise',
+        element: service.title,
+        metadata: {
+          service: service.title
+        }
+      })
+    } catch (_) {
+      // ignore
+    }
+  }
 }
 </script>
 

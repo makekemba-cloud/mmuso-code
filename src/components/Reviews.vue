@@ -73,7 +73,7 @@
     </div>
   </section>
 
-  <!-- Popup – Teleported to body to avoid stacking issues -->
+  <!-- Popup – Teleported to body -->
   <Teleport to="body">
     <div v-if="popupOpen" class="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999] p-4">
       <div class="bg-[#0a0a0a] border border-gray-800 rounded-xl max-w-md w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
@@ -124,6 +124,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
+import { useTracker } from '../composables/useTracker';   // ← import tracker
 
 interface Review {
   _id: string;
@@ -151,13 +152,17 @@ const form = ref({
   location: '',
 });
 
+// ── Tracker ──
+const { trackEvent } = useTracker();
+
+// ── Computed ──
 const averageRating = computed(() => {
   if (reviews.value.length === 0) return 0;
   const total = reviews.value.reduce((sum, r) => sum + r.rating, 0);
   return total / reviews.value.length;
 });
 
-// Build a longer list for seamless scrolling.
+// ── Displayed reviews for scrolling ──
 const displayedReviews = computed(() => {
   if (reviews.value.length === 0) return [];
   const minCopies = Math.ceil(10 / reviews.value.length);
@@ -165,17 +170,41 @@ const displayedReviews = computed(() => {
   return Array.from({ length: copies }, () => reviews.value).flat();
 });
 
+// ── Popup functions ──
 const openPopup = () => {
   popupOpen.value = true;
+
+  // Track popup open
+  try {
+    trackEvent({
+      event: 'review_popup_open',
+      category: 'reviews',
+      element: 'Leave a Review Button',
+      metadata: { source: 'reviews section' }
+    });
+  } catch (_) { /* ignore */ }
 };
 
 const closePopup = () => {
+  // Close immediately
   popupOpen.value = false;
+  // Reset form and messages
   form.value = { name: '', email: '', rating: 0, comment: '', project: '', location: '' };
   submitMessage.value = '';
   submitError.value = false;
+
+  // Track popup close
+  try {
+    trackEvent({
+      event: 'review_popup_close',
+      category: 'reviews',
+      element: 'Close Button',
+      metadata: { source: 'reviews section' }
+    });
+  } catch (_) { /* ignore */ }
 };
 
+// ── API calls ──
 const fetchReviews = async () => {
   try {
     const res = await axios.get('/api/reviews');
@@ -193,21 +222,51 @@ const submitReview = async () => {
   }
   submitting.value = true;
   submitMessage.value = '';
+
   try {
     await axios.post('/api/reviews', form.value);
+
+    // Success
     submitMessage.value = 'Thank you for your review!';
     submitError.value = false;
     form.value = { name: '', email: '', rating: 0, comment: '', project: '', location: '' };
     await fetchReviews();
+
+    // Track successful submission
+    try {
+      trackEvent({
+        event: 'review_submitted',
+        category: 'reviews',
+        element: 'Submit Review',
+        metadata: {
+          rating: form.value.rating,
+          hasProject: !!form.value.project,
+          hasLocation: !!form.value.location
+        }
+      });
+    } catch (_) { /* ignore */ }
+
+    // Auto‑close after success
     setTimeout(() => closePopup(), 1500);
   } catch (err: any) {
     submitMessage.value = err.response?.data?.error || 'Failed to submit review';
     submitError.value = true;
+
+    // Track failure (optional)
+    try {
+      trackEvent({
+        event: 'review_submit_failed',
+        category: 'reviews',
+        element: 'Submit Review',
+        metadata: { error: submitMessage.value }
+      });
+    } catch (_) { /* ignore */ }
   } finally {
     submitting.value = false;
   }
 };
 
+// ── Lifecycle ──
 onMounted(fetchReviews);
 </script>
 
