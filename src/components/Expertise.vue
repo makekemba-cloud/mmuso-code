@@ -407,7 +407,7 @@ function closeModal() {
         <div
           v-for="item in items"
           :key="item.title"
-          class="w-1/2 md:w-1/3 lg:w-1/4 px-2 md:px-3 mb-5 md:mb-8"
+          class="w-1/1 md:w-1/3 lg:w-1/4 px-2 md:px-3 mb-5 md:mb-8"
         >
           <div class="bg-[#0a0a0a] p-5 md:p-6 rounded-2xl border border-gray-800 transition-all duration-500 hover:-translate-y-1 hover:border-[#2563EB]/50 hover:shadow-[0_0_30px_rgba(37,99,235,0.12)] h-full">
             
